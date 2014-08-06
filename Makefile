@@ -1,6 +1,7 @@
 
 PACKCC?=packcc
 CC:=clang
+CFLAGS:=-std=gnu99
 
 # Hi!
 .PHONY: all devdeps deps
@@ -8,9 +9,9 @@ CC:=clang
 all: pug
 	@echo "Phew."
 	
-pug: grammar source/pug.c
+pug: source/pug.c source/parser.c
 	mkdir -p bin
-	${CC} source/pug.c -o bin/pug
+	${CC} source/pug.c source/parser.c -o bin/pug
 	
 grammar: source/parser.c
 

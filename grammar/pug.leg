@@ -1,5 +1,5 @@
 
-%prefix "calc"
+%prefix "pug_parser"
 
 statement <- _ e:expression _ EOL { printf("answer=%d\n", e); }
            / ( !EOL . )* EOL      { printf("error\n"); }
@@ -24,10 +24,3 @@ primary <- < [0-9]+ >               { $$ = atoi($1); }
 _      <- [ \t]*
 EOL    <- '\n' / '\r\n' / '\r' / ';'
 
-%%
-int main() {
-    calc_context_t *ctx = calc_create(NULL);
-    while (calc_parse(ctx, NULL));
-    calc_destroy(ctx);
-    return 0;
-}

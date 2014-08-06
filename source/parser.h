@@ -7,11 +7,11 @@
 extern "C" {
 #endif
 
-typedef struct calc_context_tag calc_context_t;
+typedef struct pug_parser_context_tag pug_parser_context_t;
 
-calc_context_t *calc_create(void *auxil);
-int calc_parse(calc_context_t *ctx, int *ret);
-void calc_destroy(calc_context_t *ctx);
+pug_parser_context_t *pug_parser_create(void *auxil);
+int pug_parser_parse(pug_parser_context_t *ctx, int *ret);
+void pug_parser_destroy(pug_parser_context_t *ctx);
 
 #ifdef __cplusplus
 }

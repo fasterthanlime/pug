@@ -81,7 +81,7 @@ typedef struct pcc_capture_const_table_tag {
 typedef struct pcc_thunk_tag pcc_thunk_t;
 typedef struct pcc_thunk_array_tag pcc_thunk_array_t;
 
-typedef void (*pcc_action_t)(calc_context_t *, pcc_thunk_t *, pcc_value_t *);
+typedef void (*pcc_action_t)(pug_parser_context_t *, pcc_thunk_t *, pcc_value_t *);
 
 typedef enum pcc_thunk_type_tag {
     PCC_THUNK_LEAF,
@@ -144,7 +144,7 @@ struct pcc_lr_answer_tag {
     pcc_lr_answer_t *hold;
 };
 
-typedef pcc_thunk_chunk_t *(*pcc_rule_t)(calc_context_t *);
+typedef pcc_thunk_chunk_t *(*pcc_rule_t)(pug_parser_context_t *);
 
 typedef struct pcc_rule_set_tag {
     pcc_rule_t *buf;
@@ -197,7 +197,7 @@ typedef struct pcc_lr_stack_tag {
     int len;
 } pcc_lr_stack_t;
 
-struct calc_context_tag {
+struct pug_parser_context_tag {
     int pos;
     pcc_char_array_t buffer;
     pcc_lr_table_t lrtable;
@@ -719,8 +719,8 @@ static void pcc_lr_stack__term(pcc_auxil_t auxil, pcc_lr_stack_t *stack) {
     PCC_FREE(auxil, stack->buf);
 }
 
-static calc_context_t *pcc_context__create(pcc_auxil_t auxil) {
-    calc_context_t *ctx = (calc_context_t *)PCC_MALLOC(auxil, sizeof(calc_context_t));
+static pug_parser_context_t *pcc_context__create(pcc_auxil_t auxil) {
+    pug_parser_context_t *ctx = (pug_parser_context_t *)PCC_MALLOC(auxil, sizeof(pug_parser_context_t));
     ctx->pos = 0;
     pcc_char_array__init(auxil, &ctx->buffer, PCC_BUFFERSIZE);
     pcc_lr_table__init(auxil, &ctx->lrtable, PCC_BUFFERSIZE);
@@ -729,7 +729,7 @@ static calc_context_t *pcc_context__create(pcc_auxil_t auxil) {
     return ctx;
 }
 
-static void pcc_context__destroy(calc_context_t *ctx) {
+static void pcc_context__destroy(pug_parser_context_t *ctx) {
     if (ctx == NULL) return;
     pcc_lr_stack__term(ctx->auxil, &ctx->lrstack);
     pcc_lr_table__term(ctx->auxil, &ctx->lrtable);
@@ -737,7 +737,7 @@ static void pcc_context__destroy(calc_context_t *ctx) {
     PCC_FREE(ctx->auxil, ctx);
 }
 
-static int pcc_refill_buffer(calc_context_t *ctx, int num) {
+static int pcc_refill_buffer(pug_parser_context_t *ctx, int num) {
     int n, c;
     n = ctx->buffer.len - ctx->pos;
     if (n >= num) return n;
@@ -749,21 +749,21 @@ static int pcc_refill_buffer(calc_context_t *ctx, int num) {
     return ctx->buffer.len - ctx->pos;
 }
 
-static void pcc_commit_buffer(calc_context_t *ctx) {
+static void pcc_commit_buffer(pug_parser_context_t *ctx) {
     memmove(ctx->buffer.buf, ctx->buffer.buf + ctx->pos, ctx->buffer.len - ctx->pos);
     ctx->buffer.len -= ctx->pos;
     pcc_lr_table__shift(ctx->auxil, &ctx->lrtable, ctx->pos);
     ctx->pos = 0;
 }
 
-static const char *pcc_get_capture_string(calc_context_t *ctx, const pcc_capture_t *capt) {
+static const char *pcc_get_capture_string(pug_parser_context_t *ctx, const pcc_capture_t *capt) {
     if (capt->string == NULL)
         ((pcc_capture_t *)capt)->string =
             pcc_strndup_e(ctx->auxil, ctx->buffer.buf + capt->range.start, capt->range.end - capt->range.start);
     return capt->string;
 }
 
-static pcc_bool_t pcc_apply_rule(calc_context_t *ctx, pcc_rule_t rule, pcc_thunk_array_t *thunks, pcc_value_t *value) {
+static pcc_bool_t pcc_apply_rule(pug_parser_context_t *ctx, pcc_rule_t rule, pcc_thunk_array_t *thunks, pcc_value_t *value) {
     static pcc_value_t null;
     pcc_thunk_chunk_t *c = NULL;
     int p = ctx->pos;
@@ -861,7 +861,7 @@ static pcc_bool_t pcc_apply_rule(calc_context_t *ctx, pcc_rule_t rule, pcc_thunk
     return PCC_TRUE;
 }
 
-static void pcc_do_action(calc_context_t *ctx, const pcc_thunk_array_t *thunks, pcc_value_t *value) {
+static void pcc_do_action(pug_parser_context_t *ctx, const pcc_thunk_array_t *thunks, pcc_value_t *value) {
     int i;
     for (i = 0; i < thunks->len; i++) {
         pcc_thunk_t *thunk = thunks->buf[i];
@@ -878,7 +878,7 @@ static void pcc_do_action(calc_context_t *ctx, const pcc_thunk_array_t *thunks, 
     }
 }
 
-static void pcc_action_statement_0(calc_context_t *__pcc_ctx, pcc_thunk_t *__pcc_in, pcc_value_t *__pcc_out) {
+static void pcc_action_statement_0(pug_parser_context_t *__pcc_ctx, pcc_thunk_t *__pcc_in, pcc_value_t *__pcc_out) {
 #define auxil (__pcc_ctx->auxil)
 #define __ (*__pcc_out)
 #define e (*__pcc_in->data.leaf.values.buf[0])
@@ -894,7 +894,7 @@ static void pcc_action_statement_0(calc_context_t *__pcc_ctx, pcc_thunk_t *__pcc
 #undef auxil
 }
 
-static void pcc_action_statement_1(calc_context_t *__pcc_ctx, pcc_thunk_t *__pcc_in, pcc_value_t *__pcc_out) {
+static void pcc_action_statement_1(pug_parser_context_t *__pcc_ctx, pcc_thunk_t *__pcc_in, pcc_value_t *__pcc_out) {
 #define auxil (__pcc_ctx->auxil)
 #define __ (*__pcc_out)
 #define _0 pcc_get_capture_string(__pcc_ctx, &__pcc_in->data.leaf.capt0)
@@ -908,7 +908,7 @@ static void pcc_action_statement_1(calc_context_t *__pcc_ctx, pcc_thunk_t *__pcc
 #undef auxil
 }
 
-static void pcc_action_expression_0(calc_context_t *__pcc_ctx, pcc_thunk_t *__pcc_in, pcc_value_t *__pcc_out) {
+static void pcc_action_expression_0(pug_parser_context_t *__pcc_ctx, pcc_thunk_t *__pcc_in, pcc_value_t *__pcc_out) {
 #define auxil (__pcc_ctx->auxil)
 #define __ (*__pcc_out)
 #define e (*__pcc_in->data.leaf.values.buf[0])
@@ -924,7 +924,7 @@ static void pcc_action_expression_0(calc_context_t *__pcc_ctx, pcc_thunk_t *__pc
 #undef auxil
 }
 
-static void pcc_action_term_0(calc_context_t *__pcc_ctx, pcc_thunk_t *__pcc_in, pcc_value_t *__pcc_out) {
+static void pcc_action_term_0(pug_parser_context_t *__pcc_ctx, pcc_thunk_t *__pcc_in, pcc_value_t *__pcc_out) {
 #define auxil (__pcc_ctx->auxil)
 #define __ (*__pcc_out)
 #define l (*__pcc_in->data.leaf.values.buf[0])
@@ -942,7 +942,7 @@ static void pcc_action_term_0(calc_context_t *__pcc_ctx, pcc_thunk_t *__pcc_in, 
 #undef auxil
 }
 
-static void pcc_action_term_1(calc_context_t *__pcc_ctx, pcc_thunk_t *__pcc_in, pcc_value_t *__pcc_out) {
+static void pcc_action_term_1(pug_parser_context_t *__pcc_ctx, pcc_thunk_t *__pcc_in, pcc_value_t *__pcc_out) {
 #define auxil (__pcc_ctx->auxil)
 #define __ (*__pcc_out)
 #define l (*__pcc_in->data.leaf.values.buf[0])
@@ -960,7 +960,7 @@ static void pcc_action_term_1(calc_context_t *__pcc_ctx, pcc_thunk_t *__pcc_in, 
 #undef auxil
 }
 
-static void pcc_action_term_2(calc_context_t *__pcc_ctx, pcc_thunk_t *__pcc_in, pcc_value_t *__pcc_out) {
+static void pcc_action_term_2(pug_parser_context_t *__pcc_ctx, pcc_thunk_t *__pcc_in, pcc_value_t *__pcc_out) {
 #define auxil (__pcc_ctx->auxil)
 #define __ (*__pcc_out)
 #define e (*__pcc_in->data.leaf.values.buf[2])
@@ -976,7 +976,7 @@ static void pcc_action_term_2(calc_context_t *__pcc_ctx, pcc_thunk_t *__pcc_in, 
 #undef auxil
 }
 
-static void pcc_action_factor_0(calc_context_t *__pcc_ctx, pcc_thunk_t *__pcc_in, pcc_value_t *__pcc_out) {
+static void pcc_action_factor_0(pug_parser_context_t *__pcc_ctx, pcc_thunk_t *__pcc_in, pcc_value_t *__pcc_out) {
 #define auxil (__pcc_ctx->auxil)
 #define __ (*__pcc_out)
 #define l (*__pcc_in->data.leaf.values.buf[0])
@@ -994,7 +994,7 @@ static void pcc_action_factor_0(calc_context_t *__pcc_ctx, pcc_thunk_t *__pcc_in
 #undef auxil
 }
 
-static void pcc_action_factor_1(calc_context_t *__pcc_ctx, pcc_thunk_t *__pcc_in, pcc_value_t *__pcc_out) {
+static void pcc_action_factor_1(pug_parser_context_t *__pcc_ctx, pcc_thunk_t *__pcc_in, pcc_value_t *__pcc_out) {
 #define auxil (__pcc_ctx->auxil)
 #define __ (*__pcc_out)
 #define l (*__pcc_in->data.leaf.values.buf[0])
@@ -1012,7 +1012,7 @@ static void pcc_action_factor_1(calc_context_t *__pcc_ctx, pcc_thunk_t *__pcc_in
 #undef auxil
 }
 
-static void pcc_action_factor_2(calc_context_t *__pcc_ctx, pcc_thunk_t *__pcc_in, pcc_value_t *__pcc_out) {
+static void pcc_action_factor_2(pug_parser_context_t *__pcc_ctx, pcc_thunk_t *__pcc_in, pcc_value_t *__pcc_out) {
 #define auxil (__pcc_ctx->auxil)
 #define __ (*__pcc_out)
 #define e (*__pcc_in->data.leaf.values.buf[2])
@@ -1028,7 +1028,7 @@ static void pcc_action_factor_2(calc_context_t *__pcc_ctx, pcc_thunk_t *__pcc_in
 #undef auxil
 }
 
-static void pcc_action_unary_0(calc_context_t *__pcc_ctx, pcc_thunk_t *__pcc_in, pcc_value_t *__pcc_out) {
+static void pcc_action_unary_0(pug_parser_context_t *__pcc_ctx, pcc_thunk_t *__pcc_in, pcc_value_t *__pcc_out) {
 #define auxil (__pcc_ctx->auxil)
 #define __ (*__pcc_out)
 #define e (*__pcc_in->data.leaf.values.buf[0])
@@ -1044,7 +1044,7 @@ static void pcc_action_unary_0(calc_context_t *__pcc_ctx, pcc_thunk_t *__pcc_in,
 #undef auxil
 }
 
-static void pcc_action_unary_1(calc_context_t *__pcc_ctx, pcc_thunk_t *__pcc_in, pcc_value_t *__pcc_out) {
+static void pcc_action_unary_1(pug_parser_context_t *__pcc_ctx, pcc_thunk_t *__pcc_in, pcc_value_t *__pcc_out) {
 #define auxil (__pcc_ctx->auxil)
 #define __ (*__pcc_out)
 #define e (*__pcc_in->data.leaf.values.buf[0])
@@ -1060,7 +1060,7 @@ static void pcc_action_unary_1(calc_context_t *__pcc_ctx, pcc_thunk_t *__pcc_in,
 #undef auxil
 }
 
-static void pcc_action_unary_2(calc_context_t *__pcc_ctx, pcc_thunk_t *__pcc_in, pcc_value_t *__pcc_out) {
+static void pcc_action_unary_2(pug_parser_context_t *__pcc_ctx, pcc_thunk_t *__pcc_in, pcc_value_t *__pcc_out) {
 #define auxil (__pcc_ctx->auxil)
 #define __ (*__pcc_out)
 #define e (*__pcc_in->data.leaf.values.buf[0])
@@ -1076,7 +1076,7 @@ static void pcc_action_unary_2(calc_context_t *__pcc_ctx, pcc_thunk_t *__pcc_in,
 #undef auxil
 }
 
-static void pcc_action_primary_0(calc_context_t *__pcc_ctx, pcc_thunk_t *__pcc_in, pcc_value_t *__pcc_out) {
+static void pcc_action_primary_0(pug_parser_context_t *__pcc_ctx, pcc_thunk_t *__pcc_in, pcc_value_t *__pcc_out) {
 #define auxil (__pcc_ctx->auxil)
 #define __ (*__pcc_out)
 #define _0 pcc_get_capture_string(__pcc_ctx, &__pcc_in->data.leaf.capt0)
@@ -1096,7 +1096,7 @@ static void pcc_action_primary_0(calc_context_t *__pcc_ctx, pcc_thunk_t *__pcc_i
 #undef auxil
 }
 
-static void pcc_action_primary_1(calc_context_t *__pcc_ctx, pcc_thunk_t *__pcc_in, pcc_value_t *__pcc_out) {
+static void pcc_action_primary_1(pug_parser_context_t *__pcc_ctx, pcc_thunk_t *__pcc_in, pcc_value_t *__pcc_out) {
 #define auxil (__pcc_ctx->auxil)
 #define __ (*__pcc_out)
 #define e (*__pcc_in->data.leaf.values.buf[0])
@@ -1112,16 +1112,16 @@ static void pcc_action_primary_1(calc_context_t *__pcc_ctx, pcc_thunk_t *__pcc_i
 #undef auxil
 }
 
-static pcc_thunk_chunk_t *pcc_evaluate_rule_statement(calc_context_t *ctx);
-static pcc_thunk_chunk_t *pcc_evaluate_rule_expression(calc_context_t *ctx);
-static pcc_thunk_chunk_t *pcc_evaluate_rule_term(calc_context_t *ctx);
-static pcc_thunk_chunk_t *pcc_evaluate_rule_factor(calc_context_t *ctx);
-static pcc_thunk_chunk_t *pcc_evaluate_rule_unary(calc_context_t *ctx);
-static pcc_thunk_chunk_t *pcc_evaluate_rule_primary(calc_context_t *ctx);
-static pcc_thunk_chunk_t *pcc_evaluate_rule__(calc_context_t *ctx);
-static pcc_thunk_chunk_t *pcc_evaluate_rule_EOL(calc_context_t *ctx);
+static pcc_thunk_chunk_t *pcc_evaluate_rule_statement(pug_parser_context_t *ctx);
+static pcc_thunk_chunk_t *pcc_evaluate_rule_expression(pug_parser_context_t *ctx);
+static pcc_thunk_chunk_t *pcc_evaluate_rule_term(pug_parser_context_t *ctx);
+static pcc_thunk_chunk_t *pcc_evaluate_rule_factor(pug_parser_context_t *ctx);
+static pcc_thunk_chunk_t *pcc_evaluate_rule_unary(pug_parser_context_t *ctx);
+static pcc_thunk_chunk_t *pcc_evaluate_rule_primary(pug_parser_context_t *ctx);
+static pcc_thunk_chunk_t *pcc_evaluate_rule__(pug_parser_context_t *ctx);
+static pcc_thunk_chunk_t *pcc_evaluate_rule_EOL(pug_parser_context_t *ctx);
 
-static pcc_thunk_chunk_t *pcc_evaluate_rule_statement(calc_context_t *ctx) {
+static pcc_thunk_chunk_t *pcc_evaluate_rule_statement(pug_parser_context_t *ctx) {
     pcc_thunk_chunk_t *chunk = pcc_thunk_chunk__create(ctx->auxil);
     chunk->pos = ctx->pos;
     pcc_value_table__resize(ctx->auxil, &chunk->values, 1);
@@ -1180,7 +1180,7 @@ L0000:;
     return NULL;
 }
 
-static pcc_thunk_chunk_t *pcc_evaluate_rule_expression(calc_context_t *ctx) {
+static pcc_thunk_chunk_t *pcc_evaluate_rule_expression(pug_parser_context_t *ctx) {
     pcc_thunk_chunk_t *chunk = pcc_thunk_chunk__create(ctx->auxil);
     chunk->pos = ctx->pos;
     pcc_value_table__resize(ctx->auxil, &chunk->values, 1);
@@ -1199,7 +1199,7 @@ L0000:;
     return NULL;
 }
 
-static pcc_thunk_chunk_t *pcc_evaluate_rule_term(calc_context_t *ctx) {
+static pcc_thunk_chunk_t *pcc_evaluate_rule_term(pug_parser_context_t *ctx) {
     pcc_thunk_chunk_t *chunk = pcc_thunk_chunk__create(ctx->auxil);
     chunk->pos = ctx->pos;
     pcc_value_table__resize(ctx->auxil, &chunk->values, 3);
@@ -1270,7 +1270,7 @@ L0000:;
     return NULL;
 }
 
-static pcc_thunk_chunk_t *pcc_evaluate_rule_factor(calc_context_t *ctx) {
+static pcc_thunk_chunk_t *pcc_evaluate_rule_factor(pug_parser_context_t *ctx) {
     pcc_thunk_chunk_t *chunk = pcc_thunk_chunk__create(ctx->auxil);
     chunk->pos = ctx->pos;
     pcc_value_table__resize(ctx->auxil, &chunk->values, 3);
@@ -1341,7 +1341,7 @@ L0000:;
     return NULL;
 }
 
-static pcc_thunk_chunk_t *pcc_evaluate_rule_unary(calc_context_t *ctx) {
+static pcc_thunk_chunk_t *pcc_evaluate_rule_unary(pug_parser_context_t *ctx) {
     pcc_thunk_chunk_t *chunk = pcc_thunk_chunk__create(ctx->auxil);
     chunk->pos = ctx->pos;
     pcc_value_table__resize(ctx->auxil, &chunk->values, 1);
@@ -1406,7 +1406,7 @@ L0000:;
     return NULL;
 }
 
-static pcc_thunk_chunk_t *pcc_evaluate_rule_primary(calc_context_t *ctx) {
+static pcc_thunk_chunk_t *pcc_evaluate_rule_primary(pug_parser_context_t *ctx) {
     pcc_thunk_chunk_t *chunk = pcc_thunk_chunk__create(ctx->auxil);
     chunk->pos = ctx->pos;
     pcc_value_table__resize(ctx->auxil, &chunk->values, 1);
@@ -1480,7 +1480,7 @@ L0000:;
     return NULL;
 }
 
-static pcc_thunk_chunk_t *pcc_evaluate_rule__(calc_context_t *ctx) {
+static pcc_thunk_chunk_t *pcc_evaluate_rule__(pug_parser_context_t *ctx) {
     pcc_thunk_chunk_t *chunk = pcc_thunk_chunk__create(ctx->auxil);
     chunk->pos = ctx->pos;
     pcc_value_table__resize(ctx->auxil, &chunk->values, 0);
@@ -1502,7 +1502,7 @@ static pcc_thunk_chunk_t *pcc_evaluate_rule__(calc_context_t *ctx) {
     return chunk;
 }
 
-static pcc_thunk_chunk_t *pcc_evaluate_rule_EOL(calc_context_t *ctx) {
+static pcc_thunk_chunk_t *pcc_evaluate_rule_EOL(pug_parser_context_t *ctx) {
     pcc_thunk_chunk_t *chunk = pcc_thunk_chunk__create(ctx->auxil);
     chunk->pos = ctx->pos;
     pcc_value_table__resize(ctx->auxil, &chunk->values, 0);
@@ -1559,11 +1559,11 @@ L0000:;
     return NULL;
 }
 
-calc_context_t *calc_create(void *auxil) {
+pug_parser_context_t *pug_parser_create(void *auxil) {
     return pcc_context__create(auxil);
 }
 
-int calc_parse(calc_context_t *ctx, int *ret) {
+int pug_parser_parse(pug_parser_context_t *ctx, int *ret) {
     pcc_thunk_array_t thunks;
     pcc_thunk_array__init(ctx->auxil, &thunks, PCC_ARRAYSIZE);
     if (pcc_apply_rule(ctx, pcc_evaluate_rule_statement, &thunks, ret))
@@ -1575,13 +1575,6 @@ int calc_parse(calc_context_t *ctx, int *ret) {
     return pcc_refill_buffer(ctx, 1) >= 1;
 }
 
-void calc_destroy(calc_context_t *ctx) {
+void pug_parser_destroy(pug_parser_context_t *ctx) {
     pcc_context__destroy(ctx);
-}
-
-int main() {
-    calc_context_t *ctx = calc_create(NULL);
-    while (calc_parse(ctx, NULL));
-    calc_destroy(ctx);
-    return 0;
 }

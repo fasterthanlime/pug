@@ -7,9 +7,7 @@ export DEVPREFIX
 all: prepare packcc
 	
 prepare:
-	mkdir -p ${DEVPREFIX}
-	mkdir -p ${DEVPREFIX}/bin
-	mkdir -p ${DEVPREFIX}/lib
+	@mkdir -p ${DEVPREFIX} ${DEVPREFIX}/bin ${DEVPREFIX}/lib
 
 packcc:
 	${MAKE} -C packcc

@@ -1,7 +1,8 @@
 
 PACKCC?=packcc
 CC:=clang
-CFLAGS:=-std=gnu99
+CCFLAGS:=-Ideps/prefix/include -std=gnu99
+LDFLAGS:=-Ldeps/prefix/lib -Wl,-rpath,${CURDIR}/deps/prefix/lib -lcollections
 
 # Hi!
 .PHONY: all devdeps deps
@@ -9,9 +10,9 @@ CFLAGS:=-std=gnu99
 all: pug
 	@echo "Phew."
 	
-pug: source/pug.c source/parser.c
-	mkdir -p bin
-	${CC} source/pug.c source/parser.c -o bin/pug
+pug: deps source/pug.c source/parser.c
+	@mkdir -p bin
+	${CC} ${CCFLAGS} source/pug.c source/parser.c ${LDFLAGS} -o bin/pug
 	
 grammar: source/parser.c
 
@@ -19,7 +20,7 @@ source/parser.c: grammar/pug.leg
 	cd source && ${PACKCC} -o parser ${CURDIR}/grammar/pug.leg
 
 devdeps:
-	${MAKE} -C devdeps
+	@${MAKE} -C devdeps
 
 deps:
-	${MAKE} -C deps
+	@${MAKE} -C deps

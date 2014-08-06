@@ -7,11 +7,11 @@ export PREFIX
 all: prepare libcollections
 	
 prepare:
-	mkdir -p ${PREFIX}
-	mkdir -p ${PREFIX}/bin
-	mkdir -p ${PREFIX}/lib
+	@mkdir -p ${PREFIX} ${PREFIX}/bin ${PREFIX}/lib
 
-libcollections:
+libcollections: prefix/include/libcollections/libcollections-config.h
+
+prefix/include/libcollections/libcollections-config.h:
 	mkdir -p build/libcollections
 	cd build/libcollections && ${CURDIR}/libcollections/configure --prefix=${PREFIX}
 	${MAKE} -C build/libcollections install

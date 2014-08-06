@@ -932,7 +932,7 @@ static void pcc_action_term_0(pug_parser_context_t *__pcc_ctx, pcc_thunk_t *__pc
 #define _0 pcc_get_capture_string(__pcc_ctx, &__pcc_in->data.leaf.capt0)
 #define _0s ((const)__pcc_in->data.leaf.capt0.range.start)
 #define _0e ((const)__pcc_in->data.leaf.capt0.range.end)
-    __ = l + r; 
+    pug_parser_on_operation('+', l, r); __ = l + r; 
 #undef _0e
 #undef _0s
 #undef _0
@@ -950,7 +950,7 @@ static void pcc_action_term_1(pug_parser_context_t *__pcc_ctx, pcc_thunk_t *__pc
 #define _0 pcc_get_capture_string(__pcc_ctx, &__pcc_in->data.leaf.capt0)
 #define _0s ((const)__pcc_in->data.leaf.capt0.range.start)
 #define _0e ((const)__pcc_in->data.leaf.capt0.range.end)
-    __ = l - r; 
+    pug_parser_on_operation('-', l, r); __ = l - r; 
 #undef _0e
 #undef _0s
 #undef _0
@@ -984,7 +984,7 @@ static void pcc_action_factor_0(pug_parser_context_t *__pcc_ctx, pcc_thunk_t *__
 #define _0 pcc_get_capture_string(__pcc_ctx, &__pcc_in->data.leaf.capt0)
 #define _0s ((const)__pcc_in->data.leaf.capt0.range.start)
 #define _0e ((const)__pcc_in->data.leaf.capt0.range.end)
-    __ = l * r; 
+    pug_parser_on_operation('*', l, r); __ = l * r; 
 #undef _0e
 #undef _0s
 #undef _0
@@ -1002,7 +1002,7 @@ static void pcc_action_factor_1(pug_parser_context_t *__pcc_ctx, pcc_thunk_t *__
 #define _0 pcc_get_capture_string(__pcc_ctx, &__pcc_in->data.leaf.capt0)
 #define _0s ((const)__pcc_in->data.leaf.capt0.range.start)
 #define _0e ((const)__pcc_in->data.leaf.capt0.range.end)
-    __ = l / r; 
+    pug_parser_on_operation('*', l, r); __ = l / r; 
 #undef _0e
 #undef _0s
 #undef _0

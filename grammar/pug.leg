@@ -6,12 +6,12 @@ statement <- _ e:expression _ EOL { printf("answer=%d\n", e); }
 
 expression <- e:term { $$ = e; }
 
-term <- l:term _ '+' _ r:factor { $$ = l + r; }
-      / l:term _ '-' _ r:factor { $$ = l - r; }
+term <- l:term _ '+' _ r:factor { pug_parser_on_operation('+', l, r); $$ = l + r; }
+      / l:term _ '-' _ r:factor { pug_parser_on_operation('-', l, r); $$ = l - r; }
       / e:factor                { $$ = e; }
 
-factor <- l:factor _ '*' _ r:unary { $$ = l * r; }
-        / l:factor _ '/' _ r:unary { $$ = l / r; }
+factor <- l:factor _ '*' _ r:unary { pug_parser_on_operation('*', l, r); $$ = l * r; }
+        / l:factor _ '/' _ r:unary { pug_parser_on_operation('*', l, r); $$ = l / r; }
         / e:unary                  { $$ = e; }
 
 unary <- '+' _ e:unary { $$ = +e; }
@@ -23,4 +23,8 @@ primary <- < [0-9]+ >               { $$ = atoi($1); }
 
 _      <- [ \t]*
 EOL    <- '\n' / '\r\n' / '\r' / ';'
+
+%header {
+  void pug_parser_on_operation(char, int, int);
+}
 

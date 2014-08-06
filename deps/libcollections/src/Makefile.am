@@ -2,12 +2,10 @@
 # Add new files in alphabetical order. Thanks.
 libcollections_src = \
 array.c \
-bench-mark.c \
 bheap.c \
 buffer.c \
 bitset.c \
 dlist.c \
-flat-db.c \
 hash-functions.c \
 hash-map.c \
 hash-table.c \
@@ -18,19 +16,20 @@ tree-map.c \
 tstring.c \
 variant.c \
 vector.c
+# commented out files:
+# bench-mark.c
+# flat-db.c
 
 # Add new files in alphabetical order. Thanks.
 libcollections_headers = \
 alloc.h \
 array.h \
-bench-mark.h \
 bheap.h \
 bheap-template.h \
 buffer.h \
 bitset.h \
 libcollections-config.h \
 dlist.h \
-flat-db.h \
 hash-functions.h \
 hash-map.h \
 hash-table.h \
@@ -44,6 +43,9 @@ types.h \
 variant.h \
 vector.h \
 vector-template.h
+# commented out files:
+# bench-mark.h
+# flat-db.h
 
 library_includedir      = $(includedir)/libcollections/
 library_include_HEADERS = $(libcollections_headers)

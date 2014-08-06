@@ -122,10 +122,9 @@ am__installdirs = "$(DESTDIR)$(libdir)" \
 	"$(DESTDIR)$(library_includedir)"
 LTLIBRARIES = $(lib_LTLIBRARIES)
 __top_builddir__lib_libcollections_la_LIBADD =
-am__objects_1 = array.lo bench-mark.lo bheap.lo buffer.lo bitset.lo \
-	dlist.lo flat-db.lo hash-functions.lo hash-map.lo \
-	hash-table.lo lhash-table.lo rbtree.lo slist.lo tree-map.lo \
-	tstring.lo variant.lo vector.lo
+am__objects_1 = array.lo bheap.lo buffer.lo bitset.lo dlist.lo \
+	hash-functions.lo hash-map.lo hash-table.lo lhash-table.lo \
+	rbtree.lo slist.lo tree-map.lo tstring.lo variant.lo vector.lo
 am___top_builddir__lib_libcollections_la_OBJECTS = $(am__objects_1)
 __top_builddir__lib_libcollections_la_OBJECTS =  \
 	$(am___top_builddir__lib_libcollections_la_OBJECTS)
@@ -315,12 +314,10 @@ top_srcdir = @top_srcdir@
 # Add new files in alphabetical order. Thanks.
 libcollections_src = \
 array.c \
-bench-mark.c \
 bheap.c \
 buffer.c \
 bitset.c \
 dlist.c \
-flat-db.c \
 hash-functions.c \
 hash-map.c \
 hash-table.c \
@@ -332,19 +329,20 @@ tstring.c \
 variant.c \
 vector.c
 
+# commented out files:
+# bench-mark.c
+# flat-db.c
 
 # Add new files in alphabetical order. Thanks.
 libcollections_headers = \
 alloc.h \
 array.h \
-bench-mark.h \
 bheap.h \
 bheap-template.h \
 buffer.h \
 bitset.h \
 libcollections-config.h \
 dlist.h \
-flat-db.h \
 hash-functions.h \
 hash-map.h \
 hash-table.h \
@@ -359,6 +357,9 @@ variant.h \
 vector.h \
 vector-template.h
 
+# commented out files:
+# bench-mark.h
+# flat-db.h
 library_includedir = $(includedir)/libcollections/
 library_include_HEADERS = $(libcollections_headers)
 
@@ -464,12 +465,10 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/array.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bench-mark.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bheap.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bitset.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/buffer.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dlist.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/flat-db.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hash-functions.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hash-map.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hash-table.Plo@am__quote@

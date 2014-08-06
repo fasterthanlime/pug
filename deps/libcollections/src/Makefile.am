@@ -13,12 +13,12 @@ lhash-table.c \
 rbtree.c \
 slist.c \
 tree-map.c \
-tstring.c \
 variant.c \
 vector.c
 # commented out files:
 # bench-mark.c
 # flat-db.c
+# tstring.c
 
 # Add new files in alphabetical order. Thanks.
 libcollections_headers = \
@@ -38,7 +38,6 @@ macros.h \
 rbtree.h \
 slist.h \
 tree-map.h \
-tstring.h \
 types.h \
 variant.h \
 vector.h \
@@ -46,6 +45,7 @@ vector-template.h
 # commented out files:
 # bench-mark.h
 # flat-db.h
+# tstring.h
 
 library_includedir      = $(includedir)/libcollections/
 library_include_HEADERS = $(libcollections_headers)

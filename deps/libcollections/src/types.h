@@ -19,8 +19,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-#ifndef _TYPES_H_
-#define _TYPES_H_
+
+#ifndef _LIBCOLLECTIONS_TYPES_H_
+#define _LIBCOLLECTIONS_TYPES_H_
 
 #include <stddef.h>
 #include <wchar.h>
@@ -78,4 +79,4 @@
 #endif
 
 
-#endif /* _TYPES_H_ */
+#endif /* _LIBCOLLECTIONS_TYPES_H_ */

@@ -11,7 +11,7 @@ term <- l:term _ '+' _ r:factor { pug_parser_on_operation('+', l, r); $$ = l + r
       / e:factor                { $$ = e; }
 
 factor <- l:factor _ '*' _ r:unary { pug_parser_on_operation('*', l, r); $$ = l * r; }
-        / l:factor _ '/' _ r:unary { pug_parser_on_operation('*', l, r); $$ = l / r; }
+        / l:factor _ '/' _ r:unary { pug_parser_on_operation('/', l, r); $$ = l / r; }
         / e:unary                  { $$ = e; }
 
 unary <- '+' _ e:unary { $$ = +e; }

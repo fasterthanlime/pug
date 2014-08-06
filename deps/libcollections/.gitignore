@@ -20,24 +20,24 @@
 bin/test-*
 
 # Autoconf files
-Makefile
-Makefile.in
-aclocal.m4
-configure
-libtool
-ar-lib
-compile
-ltmain.sh
+# Makefile
+# Makefile.in
+# aclocal.m4
+# configure
+# libtool
+# ar-lib
+# compile
+# ltmain.sh
 autom4te.cache
-config.guess
-config.status
-config.sub
-bin/.libs
-bin/.dirstamp
-lib/.libs
-lib/.dirstamp
-src/.deps
-src/stamp-h1
-tests/.deps
-src/libcollections-config.h
-src/libcollections-config.h.in
+# config.guess
+# config.status
+# config.sub
+# bin/.libs
+# bin/.dirstamp
+# lib/.libs
+# lib/.dirstamp
+# src/.deps
+# src/stamp-h1
+# tests/.deps
+# src/libcollections-config.h
+# src/libcollections-config.h.in

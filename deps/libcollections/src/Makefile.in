@@ -124,7 +124,7 @@ LTLIBRARIES = $(lib_LTLIBRARIES)
 __top_builddir__lib_libcollections_la_LIBADD =
 am__objects_1 = array.lo bheap.lo buffer.lo bitset.lo dlist.lo \
 	hash-functions.lo hash-map.lo hash-table.lo lhash-table.lo \
-	rbtree.lo slist.lo tree-map.lo tstring.lo variant.lo vector.lo
+	rbtree.lo slist.lo tree-map.lo variant.lo vector.lo
 am___top_builddir__lib_libcollections_la_OBJECTS = $(am__objects_1)
 __top_builddir__lib_libcollections_la_OBJECTS =  \
 	$(am___top_builddir__lib_libcollections_la_OBJECTS)
@@ -325,13 +325,13 @@ lhash-table.c \
 rbtree.c \
 slist.c \
 tree-map.c \
-tstring.c \
 variant.c \
 vector.c
 
 # commented out files:
 # bench-mark.c
 # flat-db.c
+# tstring.c
 
 # Add new files in alphabetical order. Thanks.
 libcollections_headers = \
@@ -351,7 +351,6 @@ macros.h \
 rbtree.h \
 slist.h \
 tree-map.h \
-tstring.h \
 types.h \
 variant.h \
 vector.h \
@@ -360,6 +359,7 @@ vector-template.h
 # commented out files:
 # bench-mark.h
 # flat-db.h
+# tstring.h
 library_includedir = $(includedir)/libcollections/
 library_include_HEADERS = $(libcollections_headers)
 
@@ -476,7 +476,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rbtree.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/slist.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tree-map.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tstring.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/variant.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vector.Plo@am__quote@
 

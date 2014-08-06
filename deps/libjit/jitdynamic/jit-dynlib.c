@@ -92,7 +92,15 @@ void jit_dynlib_set_debug(int flag)
 	dynlib_debug = flag;
 }
 
-#if defined(__APPLE__) && defined(__MACH__)	/* MacOS X */
+/*
+ * Uncomment after reading this page:
+ * https://developer.apple.com/library/mac/documentation/DeveloperTools/Reference/MachOReference/Reference/reference.html
+ * And making damn sure what you're doing is what you want
+ * to be doing. In fact, don't uncomment this line.
+ */
+/* #define __DISREGARD_APPLE_GUIDELINES__ */
+
+#if defined(__APPLE__) && defined(__MACH__) && defined(__DISREGARD_APPLE_GUIDELINES__)	/* MacOS X */
 
 #include <mach-o/dyld.h>
 

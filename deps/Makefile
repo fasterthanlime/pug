@@ -1,17 +1,36 @@
 
-.PHONY: all prepare libcollections
+.PHONY: all prepare clean
 
-PREFIX:=${CURDIR}/prefix
-export PREFIX
+DEPSPREFIX:=${CURDIR}/prefix
 
-all: prepare libcollections
+LIBCOLLECTIONS_H:=prefix/include/libcollections/libcollections-config.h
+LIBJIT_H:=prefix/include/jit/jit.h
+
+all: prepare libcollections libjit
+
+clean:
+	rm -rf ${DEPSPREFIX} build
 	
 prepare:
-	@mkdir -p ${PREFIX} ${PREFIX}/bin ${PREFIX}/lib
+	@mkdir -p ${DEPSPREFIX} ${DEPSPREFIX}/bin ${DEPSPREFIX}/lib
 
-libcollections: prefix/include/libcollections/libcollections-config.h
+# basic macro-based C data structures (array, vector, hashtables, string wrappers, etc.)
 
-prefix/include/libcollections/libcollections-config.h:
+libcollections: ${LIBCOLLECTIONS_H}
+
+${LIBCOLLECTIONS_H}:
 	mkdir -p build/libcollections
-	cd build/libcollections && ${CURDIR}/libcollections/configure --prefix=${PREFIX}
+	cd build/libcollections && ${CURDIR}/libcollections/configure --prefix=${DEPSPREFIX}
 	${MAKE} -C build/libcollections install
+
+# GNU'd just-in-time compiler, portable, fast?
+
+libjit: ${LIBJIT_H}
+
+${LIBJIT_H}:
+	mkdir -p build
+	rm -rf build/libjit
+	cp -rf ${CURDIR}/libjit build/libjit
+	cd build/libjit && ./configure --prefix=${DEPSPREFIX}
+	${MAKE} -C build/libjit install
+	${MAKE} -C build/libjit

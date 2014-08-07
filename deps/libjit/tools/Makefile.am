@@ -27,7 +27,7 @@ gen-ops-scanner.l: gen-ops-parser.c
 all-local: $(top_builddir)/jit/jit-apply-rules.h
 
 $(top_builddir)/jit/jit-apply-rules.h: gen-apply$(EXEEXT)
-	./gen-apply >$@
+	./gen-apply$(EXEEXT) >$@
 
 AM_CFLAGS = -I$(top_srcdir)/include -I$(top_builddir)/include \
 		-I$(top_srcdir)/jit -I$(top_builddir)/jit

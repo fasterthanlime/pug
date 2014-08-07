@@ -16,8 +16,8 @@ pug: deps source/pug.c source/parser.c
 	
 grammar: source/parser.c
 
-source/parser.c: grammar/pug.leg
-	cd source && ${PACKCC} -o parser ${CURDIR}/grammar/pug.leg
+source/parser.c: grammar/pug.peg
+	cd source && ${PACKCC} -o parser ${CURDIR}/grammar/pug.peg
 
 devdeps:
 	@${MAKE} -C devdeps

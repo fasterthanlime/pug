@@ -12,7 +12,7 @@ extern "C" {
 typedef struct pug_parser_context_tag pug_parser_context_t;
 
 pug_parser_context_t *pug_parser_create(void *auxil);
-int pug_parser_parse(pug_parser_context_t *ctx, int *ret);
+int pug_parser_parse(pug_parser_context_t *ctx, void**ret);
 void pug_parser_destroy(pug_parser_context_t *ctx);
 
 #ifdef __cplusplus

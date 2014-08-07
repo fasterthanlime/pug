@@ -1,6 +1,6 @@
 
 PACKCC?=packcc
-CC:=clang
+CC?=clang
 CCFLAGS:=-Ideps/prefix/include -std=gnu99 -g -Os
 LDFLAGS:=-Ldeps/prefix/lib -Wl,-rpath,${CURDIR}/deps/prefix/lib -lcollections
 

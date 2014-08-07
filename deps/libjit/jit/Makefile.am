@@ -114,14 +114,14 @@ jit-rules-x86-64.inc: jit-rules-x86-64.ins $(top_builddir)/tools/gen-rules$(EXEE
 		>jit-rules-x86-64.inc
 
 jit-opcode.c: jit-opcodes.ops
-	$(top_builddir)/tools/gen-ops -T $(srcdir)/jit-opcodes.ops >jit-opcode.c
+	$(top_builddir)/tools/gen-ops$(EXEEXT) -T $(srcdir)/jit-opcodes.ops >jit-opcode.c
 
 jit-interp-opcode.h: jit-interp-opcodes.ops
-	$(top_builddir)/tools/gen-ops -H $(srcdir)/jit-interp-opcodes.ops \
+	$(top_builddir)/tools/gen-ops$(EXEEXT) -H $(srcdir)/jit-interp-opcodes.ops \
 		>jit-interp-opcode.h
 
 jit-interp-opcode.c: jit-interp-opcodes.ops
-	$(top_builddir)/tools/gen-ops -T $(srcdir)/jit-interp-opcodes.ops \
+	$(top_builddir)/tools/gen-ops$(EXEEXT) -T $(srcdir)/jit-interp-opcodes.ops \
 		>jit-interp-opcode.c
 
 CLEANFILES = \

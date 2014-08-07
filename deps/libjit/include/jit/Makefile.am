@@ -45,4 +45,4 @@ jit-arch.h: $(ARCH_HEADER)
 	$(LN_S) $(srcdir)/$(ARCH_HEADER) $@
 
 jit-opcode.h: $(top_srcdir)/jit/jit-opcodes.ops
-	$(top_builddir)/tools/gen-ops -H $(top_srcdir)/jit/jit-opcodes.ops >jit-opcode.h
+	$(top_builddir)/tools/gen-ops$(EXEEXT) -H $(top_srcdir)/jit/jit-opcodes.ops >jit-opcode.h

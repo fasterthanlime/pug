@@ -46,7 +46,7 @@
 #include <assert.h>
 
 #ifndef _MSC_VER
-#if defined __GNUC__ && defined _WIN32 /* MinGW */
+#if defined __GNUC__ && defined _WIN32 && !defined(__MINGW32__) /* MinGW */
 static size_t strnlen(const char *str, size_t maxlen) {
     size_t i;
     for (i = 0; str[i] && i < maxlen; i++);
@@ -1926,7 +1926,7 @@ static bool_t parse(context_t *ctx) {
             "#include <string.h>\n"
             "\n"
             "#ifndef _MSC_VER\n"
-            "#if defined __GNUC__ && defined _WIN32 /* MinGW */\n"
+            "#if defined __GNUC__ && defined _WIN32 && !defined(__MINGW32__) /* MinGW */\n"
             "static size_t strnlen(const char *str, size_t maxlen) {\n"
             "    size_t i;\n"
             "    for (i = 0; str[i] && i < maxlen; i++);\n"

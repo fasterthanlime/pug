@@ -21,7 +21,7 @@ libcollections: ${LIBCOLLECTIONS_H}
 
 ${LIBCOLLECTIONS_H}:
 	mkdir -p build/libcollections
-	cd build/libcollections && ${CURDIR}/libcollections/configure --prefix=${DEPSPREFIX}
+	cd build/libcollections && ${CURDIR}/libcollections/configure --prefix=${DEPSPREFIX} ${HOST_FLAGS}
 	${MAKE} -C build/libcollections install
 
 # GNU'd just-in-time compiler, portable, fast?
@@ -32,5 +32,5 @@ ${LIBJIT_H}:
 	mkdir -p build
 	rm -rf build/libjit
 	cp -rf ${CURDIR}/libjit build/libjit
-	cd build/libjit && ./configure --prefix=${DEPSPREFIX}
+	cd build/libjit && ./configure --prefix=${DEPSPREFIX} ${HOST_FLAGS}
 	${MAKE} -C build/libjit install

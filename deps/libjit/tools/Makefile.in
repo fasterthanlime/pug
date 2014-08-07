@@ -688,7 +688,7 @@ gen-ops-scanner.l: gen-ops-parser.c
 all-local: $(top_builddir)/jit/jit-apply-rules.h
 
 $(top_builddir)/jit/jit-apply-rules.h: gen-apply$(EXEEXT)
-	./gen-apply >$@
+	./gen-apply$(EXEEXT) >$@
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

@@ -7,6 +7,7 @@ LIBCOLLECTIONS_H:=prefix/include/libcollections/libcollections-config.h
 LIBJIT_H:=prefix/include/jit/jit.h
 
 all: prepare libcollections libjit
+	@echo "Deps all set!"
 
 clean:
 	rm -rf ${DEPSPREFIX} build

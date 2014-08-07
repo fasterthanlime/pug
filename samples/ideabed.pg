@@ -1,0 +1,28 @@
+
+a, b :: int32
+a = 3
+b = 5
+c = 7 # error - c isn't bound!
+a = '45' # error - incompatible types
+
+a = 32, b = 64 :: int32
+
+class A
+
+class B extends A
+  # implicit constructor calls super
+  # others need to call super explicitly
+
+class Calc
+  # this goes in the prototype
+  few: [ 1, 2, 3, 4, 5 ] :: list
+
+  # this prints 12345
+  puts few.map(:to_s).join
+
+  # this overrides the prototype
+  few = [ 5, 4, 3, 2, 1 ]
+
+  add: (a, b :: int32) ->
+    a + b
+

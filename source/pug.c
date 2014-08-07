@@ -19,7 +19,7 @@ int main() {
   vector_operation_create(&collection, 1);
 
   pug_parser_context_t *ctx = pug_parser_create(NULL);
-  while (pug_parser_parse(ctx, NULL));
+  pug_parser_parse(ctx, NULL);
   pug_parser_destroy(ctx);
 
   printf("Replaying...\n");

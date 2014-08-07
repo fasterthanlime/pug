@@ -1,0 +1,24 @@
+
+%prefix "pug_parser"
+
+Program <- (_ TopLevel EOL*)+ { printf("toplevel!\n"); }
+           / ( !EOL . )* EOL { printf("error\n"); }
+
+TopLevel <- Decl
+
+Decl <- FuncDecl
+
+FuncDecl <- _ 'def' _ name:ID _ EOL _ 'end' _ EOL { printf("func decl! name = %s\n", name); }
+
+# utils
+
+ID <- < [a-zA-Z0-9_]+ > { $$ = (void*) $1; }
+_      <- [ \t]*
+EOL    <- '\n' / '\r\n' / '\r' / ';'
+
+%value "void*"
+
+%header {
+  void pug_parser_on_operation(char, int, int);
+}
+

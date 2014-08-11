@@ -7,7 +7,7 @@
 #include <libcollections/vector.h>
 
 typedef struct pug_argument {
-    char *name;
+  char *name;
 } pug_argument_t;
 
 DECLARE_VECTOR_TYPE   ( pug_argument, pug_argument_t )

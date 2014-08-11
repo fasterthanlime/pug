@@ -913,7 +913,7 @@ static void pcc_action_FuncDecl_0(pug_parser_context_t *__pcc_ctx, pcc_thunk_t *
 #define _0 pcc_get_capture_string(__pcc_ctx, &__pcc_in->data.leaf.capt0)
 #define _0s ((const)__pcc_in->data.leaf.capt0.range.start)
 #define _0e ((const)__pcc_in->data.leaf.capt0.range.end)
-    pug_parser_on_function_start(name); 
+    pug_parser_on_function_start(auxil, name); 
 #undef _0e
 #undef _0s
 #undef _0
@@ -929,7 +929,7 @@ static void pcc_action_FuncDecl_1(pug_parser_context_t *__pcc_ctx, pcc_thunk_t *
 #define _0 pcc_get_capture_string(__pcc_ctx, &__pcc_in->data.leaf.capt0)
 #define _0s ((const)__pcc_in->data.leaf.capt0.range.start)
 #define _0e ((const)__pcc_in->data.leaf.capt0.range.end)
-    printf("func decl! name = %s\n", name); 
+    pug_parser_on_function_end(auxil); 
 #undef _0e
 #undef _0s
 #undef _0

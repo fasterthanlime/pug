@@ -3,8 +3,9 @@
 #ifndef PCC_INCLUDED__PARSER_H
 #define PCC_INCLUDED__PARSER_H
 
-void* pug_parser_on_operation(char, int, int);
-void* pug_parser_on_function_start();
+void* pug_parser_on_operation(void *, char, int, int);
+void* pug_parser_on_function_start(void *, char *name);
+void* pug_parser_on_function_end(void *);
 
 #ifdef __cplusplus
 extern "C" {

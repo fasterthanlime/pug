@@ -8,8 +8,8 @@
 #include "function.h"
 
 typedef struct pug_module {
-    char *name;
-    vector_pug_function_t functions;
+  char *name;
+  vector_pug_function_t functions;
 } pug_module_t;
 
 DECLARE_VECTOR_TYPE   ( pug_module, pug_module_t )

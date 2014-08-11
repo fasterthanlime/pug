@@ -8,14 +8,15 @@ TopLevel <- Decl
 
 Decl <- FuncDecl
 
-FuncDecl <- _ 'def' _ name:ID { pug_parser_on_function_start(auxil, name); }
-  _ (ArgList?) WS _ 'end' _ WS { pug_parser_on_function_end(auxil); }
+FuncDecl <- _ 'def' _ name:ID { pug_parser_on_function_start(auxil, name);  }
+  _ (ArgList?) WS _ 'end' _ WS { pug_parser_on_function_end(auxil);  }
 
-ArgList <- '(' WS (ID (_ ',' _ ID)*)? ')'
+ArgList <- '(' WS (Arg (_ ',' _ Arg)*)? ')'
+Arg <- name: ID { pug_parser_on_argument(auxil, name); }
 
 # utils
 
-ID <- < [a-zA-Z0-9_]+ > { $$ = pug_parser_strdup((void*) $1); }
+ID <- < [a-zA-Z0-9_]+ > { $$ = pug_parser_strdup((void*) $1);  }
 _      <- [ \t]*
 WS <- ([ \t] / EOL)*
 EOL    <- '\n' / '\r\n' / '\r' / ';'
@@ -26,6 +27,7 @@ EOL    <- '\n' / '\r\n' / '\r' / ';'
   void* pug_parser_strdup(void *);
   void* pug_parser_on_operation(void *, char, int, int);
   void* pug_parser_on_function_start(void *, char *name);
+  void* pug_parser_on_argument(void *, char *name);
   void* pug_parser_on_function_end(void *);
 }
 

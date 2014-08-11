@@ -27,7 +27,24 @@ int main() {
   printf("Replaying...\n");
   for (int i = 0; i < vector_pug_function_size(&state->module->functions); i++) {
     pug_function_t *function = vector_pug_function_get(&state->module->functions, i);
-    printf("Had function %s\n", function->name);
+    printf("Had function %s", function->name);
+    bool first = true;
+    int num_args = vector_pug_argument_size(&function->args);
+
+    if (num_args > 0) {
+      printf("(");
+      for (int j = 0; j < num_args; j++) {
+        pug_argument_t *arg = vector_pug_argument_get(&function->args, j);
+        if (first) {
+          first = false;
+        } else {
+          printf(", ");
+        }
+        printf("%s", arg->name);
+      }
+      printf(")");
+    }
+    printf("%s", "\n");
   }
 
   return 0;
@@ -53,9 +70,17 @@ void *pug_parser_on_function_start(void *auxil, char *name) {
   return function;
 }
 
+void *pug_parser_on_argument(void *auxil, char *name) {
+  pug_parser_state_t *state = auxil;
+  pug_function_t *function = state->stack.head->data;
+  pug_argument_t *arg = malloc(sizeof(pug_argument_t));
+  pug_argument_init(arg);
+  arg->name = name;
+  vector_pug_argument_push(&function->args, arg);
+}
+
 void *pug_parser_on_function_end(void *auxil) {
   pug_parser_state_t *state = auxil;
-  // pop stuff from queue
   pug_function_t *function = state->stack.head->data;
   dlist_remove_front(&state->stack);
   vector_pug_function_push(&state->module->functions, function);

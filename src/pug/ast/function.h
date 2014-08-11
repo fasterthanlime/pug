@@ -12,6 +12,8 @@ typedef struct pug_argument {
 
 DECLARE_VECTOR_TYPE   ( pug_argument, pug_argument_t )
 
+void pug_argument_init(pug_argument_t *f);
+
 typedef struct pug_function {
   char *name;
   vector_pug_argument_t args;

@@ -6,6 +6,7 @@
 void* pug_parser_strdup(void *);
 void* pug_parser_on_operation(void *, char, int, int);
 void* pug_parser_on_function_start(void *, char *name);
+void* pug_parser_on_argument(void *, char *name);
 void* pug_parser_on_function_end(void *);
 
 #ifdef __cplusplus

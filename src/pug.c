@@ -1,17 +1,5 @@
 
-#include "parser.h"
-#include <libcollections/vector.h>
-#include <stdlib.h>
-#include <stdio.h>
-
-typedef struct operation {
-  char op;
-  int l;
-  int r;
-} operation_t;
-
-DECLARE_VECTOR_TYPE   ( operation, operation_t )
-IMPLEMENT_VECTOR_TYPE ( operation, operation_t )
+#include "pug.h"
 
 static vector_operation_t collection;
 
@@ -31,10 +19,8 @@ int main() {
   return 0;
 }
 
-void pug_parser_on_operation(char op, int l, int r) {
-  operation_t *operation = vector_operation_pushx(&collection);
-  operation->op = op;
-  operation->l = l;
-  operation->r = r;
+void pug_parser_on_operation(char op, int lhs, int rhs) {
+  struct operation operation = { op, lhs, rhs };
+  vector_operation_push(&collection, &operation);
 }
 

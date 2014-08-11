@@ -7,6 +7,9 @@ include(ExternalProject)
 set(DEPS ${CMAKE_CURRENT_SOURCE_DIR}/deps)
 set(DEPS_PREFIX ${DEPS}/prefix)
 
+# Development dependencies
+add_subdirectory(devdeps)
+
 # Basic data structures for C
 ExternalProject_add(
   libcollections
@@ -30,12 +33,27 @@ ExternalProject_add(
 )
 
 # We'd like C99 support please.
-set(CMAKE_C_FLAGS "-std=c99")
+set(CMAKE_C_FLAGS "-std=gnu99")
+
+# Generate the parser from the grammar please?
+add_custom_command(
+  OUTPUT ${CMAKE_SOURCE_DIR}/src/pug-parser/parser.c ${CMAKE_SOURCE_DIR}/src/pug-parser/parser.h
+  COMMAND ${CMAKE_BINARY_DIR}/devdeps/packcc/packcc -o parser ${CMAKE_SOURCE_DIR}/grammar/pug.peg
+  COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_SOURCE_DIR}/src/pug-parser
+  COMMAND ${CMAKE_COMMAND} -E rename ${CMAKE_BINARY_DIR}/parser.c ${CMAKE_SOURCE_DIR}/src/pug-parser/parser.c
+  COMMAND ${CMAKE_COMMAND} -E rename ${CMAKE_BINARY_DIR}/parser.h ${CMAKE_SOURCE_DIR}/src/pug-parser/parser.h
+  DEPENDS ${CMAKE_SOURCE_DIR}/grammar/pug.peg devdeps
+)
 
 # All source files
-file(GLOB_RECURSE HDRS src/*.h)
-file(GLOB_RECURSE SRCS src/*.c)
-set(PUG_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
+file(GLOB_RECURSE PUG_HEADERS src/pug/*.h)
+file(GLOB_RECURSE PUG_SOURCES src/pug/*.c)
+
+set(PUG_HEADERS ${PUG_HEADERS} src/pug-parser/parser.h)
+set(PUG_SOURCES ${PUG_SOURCES} src/pug-parser/parser.c)
+
+set(PUG_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/src)
 include_directories(${PUG_INCLUDE_DIR} ${DEPS_PREFIX}/include)
 
-add_executable(pug ${HDRS} ${SRCS})
+add_executable(pug ${PUG_HEADERS} ${PUG_SOURCES})
+

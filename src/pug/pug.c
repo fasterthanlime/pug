@@ -13,7 +13,7 @@ int main() {
   printf("Replaying...\n");
   for (int i = 0; i < vector_operation_size(&collection); i++) {
     operation_t *operation = vector_operation_get(&collection, i);
-    printf("Computed %d %c %d\n", operation->l, operation->op, operation->r);
+    printf("Computed %d %c %d\n", operation->lhs, operation->op, operation->rhs);
   }
 
   return 0;

@@ -1,5 +1,5 @@
 
-#include "parser.h"
+#include <pug-parser/parser.h>
 #include "ast/operation.h"
 
 #include <libcollections/vector.h>

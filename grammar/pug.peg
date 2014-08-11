@@ -1,19 +1,22 @@
 
 %prefix "pug_parser"
 
-Program <- (_ TopLevel EOL*)+ { printf("toplevel!\n"); }
+Program <- (WS TopLevel WS)+ { printf("toplevel!\n"); }
            / ( !EOL . )* EOL { printf("error\n"); }
 
 TopLevel <- Decl
 
 Decl <- FuncDecl
 
-FuncDecl <- _ 'def' _ name:ID _ EOL _ 'end' _ EOL { printf("func decl! name = %s\n", name); }
+FuncDecl <- _ 'def' _ name:ID _ (ArgList?) WS _ 'end' _ WS { printf("func decl! name = %s\n", name); }
+
+ArgList <- '(' WS (ID (_ ',' _ ID)*)? ')'
 
 # utils
 
 ID <- < [a-zA-Z0-9_]+ > { $$ = (void*) $1; }
 _      <- [ \t]*
+WS <- ([ \t] / EOL)*
 EOL    <- '\n' / '\r\n' / '\r' / ';'
 
 %value "void*"

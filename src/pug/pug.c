@@ -37,7 +37,7 @@ void* pug_parser_on_operation(void *auxil, char op, int lhs, int rhs) {
 void *pug_parser_on_function_start(void *auxil, char *name) {
   pug_function_t *function = malloc(sizeof(pug_function_t));
   pug_function_init(function);
-  printf("Got function with name ", name);
+  printf("Got function with name %s\n", name);
   function->name = name;
   return NULL;
 }

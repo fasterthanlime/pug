@@ -884,20 +884,6 @@ static void pcc_action_Program_0(pug_parser_context_t *__pcc_ctx, pcc_thunk_t *_
 #define _0 pcc_get_capture_string(__pcc_ctx, &__pcc_in->data.leaf.capt0)
 #define _0s ((const)__pcc_in->data.leaf.capt0.range.start)
 #define _0e ((const)__pcc_in->data.leaf.capt0.range.end)
-    printf("toplevel!\n"); 
-#undef _0e
-#undef _0s
-#undef _0
-#undef __
-#undef auxil
-}
-
-static void pcc_action_Program_1(pug_parser_context_t *__pcc_ctx, pcc_thunk_t *__pcc_in, pcc_value_t *__pcc_out) {
-#define auxil (__pcc_ctx->auxil)
-#define __ (*__pcc_out)
-#define _0 pcc_get_capture_string(__pcc_ctx, &__pcc_in->data.leaf.capt0)
-#define _0s ((const)__pcc_in->data.leaf.capt0.range.start)
-#define _0e ((const)__pcc_in->data.leaf.capt0.range.end)
     printf("error\n"); 
 #undef _0e
 #undef _0s
@@ -990,12 +976,6 @@ static pcc_thunk_chunk_t *pcc_evaluate_rule_Program(pug_parser_context_t *ctx) {
                 goto L0002;
             }
         }
-        {
-            pcc_thunk_t *thunk = pcc_thunk__create_leaf(ctx->auxil, pcc_action_Program_0, 0, 0);
-            thunk->data.leaf.capt0.range.start = chunk->pos;
-            thunk->data.leaf.capt0.range.end = ctx->pos;
-            pcc_thunk_array__add(ctx->auxil, &chunk->thunks, thunk);
-        }
         goto L0001;
     L0002:;
         ctx->pos = p;
@@ -1018,7 +998,7 @@ static pcc_thunk_chunk_t *pcc_evaluate_rule_Program(pug_parser_context_t *ctx) {
         }
         if (!pcc_apply_rule(ctx, pcc_evaluate_rule_EOL, &chunk->thunks, NULL)) goto L0004;
         {
-            pcc_thunk_t *thunk = pcc_thunk__create_leaf(ctx->auxil, pcc_action_Program_1, 0, 0);
+            pcc_thunk_t *thunk = pcc_thunk__create_leaf(ctx->auxil, pcc_action_Program_0, 0, 0);
             thunk->data.leaf.capt0.range.start = chunk->pos;
             thunk->data.leaf.capt0.range.end = ctx->pos;
             pcc_thunk_array__add(ctx->auxil, &chunk->thunks, thunk);

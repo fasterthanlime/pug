@@ -1,7 +1,7 @@
 
 %prefix "pug_parser"
 
-Program <- (WS TopLevel WS)+ { printf("toplevel!\n"); }
+Program <- (WS TopLevel WS)+
            / ( !EOL . )* EOL { printf("error\n"); }
 
 TopLevel <- Decl

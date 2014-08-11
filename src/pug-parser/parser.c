@@ -913,6 +913,22 @@ static void pcc_action_FuncDecl_0(pug_parser_context_t *__pcc_ctx, pcc_thunk_t *
 #define _0 pcc_get_capture_string(__pcc_ctx, &__pcc_in->data.leaf.capt0)
 #define _0s ((const)__pcc_in->data.leaf.capt0.range.start)
 #define _0e ((const)__pcc_in->data.leaf.capt0.range.end)
+    pug_parser_on_function_start(name); 
+#undef _0e
+#undef _0s
+#undef _0
+#undef name
+#undef __
+#undef auxil
+}
+
+static void pcc_action_FuncDecl_1(pug_parser_context_t *__pcc_ctx, pcc_thunk_t *__pcc_in, pcc_value_t *__pcc_out) {
+#define auxil (__pcc_ctx->auxil)
+#define __ (*__pcc_out)
+#define name (*__pcc_in->data.leaf.values.buf[0])
+#define _0 pcc_get_capture_string(__pcc_ctx, &__pcc_in->data.leaf.capt0)
+#define _0s ((const)__pcc_in->data.leaf.capt0.range.start)
+#define _0e ((const)__pcc_in->data.leaf.capt0.range.end)
     printf("func decl! name = %s\n", name); 
 #undef _0e
 #undef _0s
@@ -1062,6 +1078,13 @@ static pcc_thunk_chunk_t *pcc_evaluate_rule_FuncDecl(pug_parser_context_t *ctx) 
     }
     if (!pcc_apply_rule(ctx, pcc_evaluate_rule__, &chunk->thunks, NULL)) goto L0000;
     if (!pcc_apply_rule(ctx, pcc_evaluate_rule_ID, &chunk->thunks, &(chunk->values.buf[0]))) goto L0000;
+    {
+        pcc_thunk_t *thunk = pcc_thunk__create_leaf(ctx->auxil, pcc_action_FuncDecl_0, 1, 0);
+        thunk->data.leaf.values.buf[0] = &(chunk->values.buf[0]);
+        thunk->data.leaf.capt0.range.start = chunk->pos;
+        thunk->data.leaf.capt0.range.end = ctx->pos;
+        pcc_thunk_array__add(ctx->auxil, &chunk->thunks, thunk);
+    }
     if (!pcc_apply_rule(ctx, pcc_evaluate_rule__, &chunk->thunks, NULL)) goto L0000;
     if (!pcc_apply_rule(ctx, pcc_evaluate_rule_ArgList, &chunk->thunks, NULL)) goto L0001;
 L0001:;
@@ -1080,7 +1103,7 @@ L0001:;
     if (!pcc_apply_rule(ctx, pcc_evaluate_rule__, &chunk->thunks, NULL)) goto L0000;
     if (!pcc_apply_rule(ctx, pcc_evaluate_rule_WS, &chunk->thunks, NULL)) goto L0000;
     {
-        pcc_thunk_t *thunk = pcc_thunk__create_leaf(ctx->auxil, pcc_action_FuncDecl_0, 1, 0);
+        pcc_thunk_t *thunk = pcc_thunk__create_leaf(ctx->auxil, pcc_action_FuncDecl_1, 1, 0);
         thunk->data.leaf.values.buf[0] = &(chunk->values.buf[0]);
         thunk->data.leaf.capt0.range.start = chunk->pos;
         thunk->data.leaf.capt0.range.end = ctx->pos;

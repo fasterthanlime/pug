@@ -8,7 +8,8 @@ TopLevel <- Decl
 
 Decl <- FuncDecl
 
-FuncDecl <- _ 'def' _ name:ID _ (ArgList?) WS _ 'end' _ WS { printf("func decl! name = %s\n", name); }
+FuncDecl <- _ 'def' _ name:ID { pug_parser_on_function_start(name); }
+  _ (ArgList?) WS _ 'end' _ WS { printf("func decl! name = %s\n", name); }
 
 ArgList <- '(' WS (ID (_ ',' _ ID)*)? ')'
 
@@ -22,6 +23,7 @@ EOL    <- '\n' / '\r\n' / '\r' / ';'
 %value "void*"
 
 %header {
-  void pug_parser_on_operation(char, int, int);
+  void* pug_parser_on_operation(char, int, int);
+  void* pug_parser_on_function_start();
 }
 

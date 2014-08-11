@@ -33,7 +33,7 @@ ExternalProject_add(
 )
 
 # We'd like C99 support please.
-set(CMAKE_C_FLAGS "-std=gnu99")
+set(CMAKE_C_FLAGS "-std=gnu99 -g -O0")
 
 # Generate the parser from the grammar please?
 add_custom_command(

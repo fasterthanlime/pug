@@ -57,3 +57,6 @@ include_directories(${PUG_INCLUDE_DIR} ${DEPS_PREFIX}/include)
 
 add_executable(pug ${PUG_HEADERS} ${PUG_SOURCES})
 
+# We need packcc to build the compiler
+add_dependencies(pug packcc)
+

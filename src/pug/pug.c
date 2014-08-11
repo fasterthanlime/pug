@@ -3,10 +3,16 @@
 
 typedef struct pug_parser_state {
   pug_module_t *module;
+  struct lc_dlist stack; 
 } pug_parser_state_t;
+
+void pug_noop(void) {
+  return;
+}
 
 void pug_parser_state_init(pug_parser_state_t *state) {
   state->module = malloc(sizeof(pug_module_t));
+  dlist_create(&state->stack, (void*) pug_noop, malloc, free);
   pug_module_init(state->module);
 }
 
@@ -27,6 +33,10 @@ int main() {
   return 0;
 }
 
+void* pug_parser_strdup(void *str) {
+  return strdup(str);
+}
+
 void* pug_parser_on_operation(void *auxil, char op, int lhs, int rhs) {
   pug_parser_state_t *state = auxil;
   pug_operation_t *operation = malloc(sizeof(pug_operation_t));
@@ -35,16 +45,19 @@ void* pug_parser_on_operation(void *auxil, char op, int lhs, int rhs) {
 }
 
 void *pug_parser_on_function_start(void *auxil, char *name) {
+  pug_parser_state_t *state = auxil;
   pug_function_t *function = malloc(sizeof(pug_function_t));
   pug_function_init(function);
-  printf("Got function with name %s\n", name);
   function->name = name;
-  return NULL;
+  dlist_insert_front(&state->stack, function);
+  return function;
 }
 
 void *pug_parser_on_function_end(void *auxil) {
+  pug_parser_state_t *state = auxil;
   // pop stuff from queue
-  /* pug_function_t *function = arg; */
-  /* vector_pug_function_push(&state->module->functions, function); */
+  pug_function_t *function = state->stack.head->data;
+  dlist_remove_front(&state->stack);
+  vector_pug_function_push(&state->module->functions, function);
 }
 

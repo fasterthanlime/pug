@@ -5,5 +5,6 @@
 #include "ast/operation.h"
 
 #include <libcollections/vector.h>
+#include <libcollections/dlist.h>
 #include <stdlib.h>
 #include <stdio.h>

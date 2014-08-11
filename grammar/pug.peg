@@ -15,7 +15,7 @@ ArgList <- '(' WS (ID (_ ',' _ ID)*)? ')'
 
 # utils
 
-ID <- < [a-zA-Z0-9_]+ > { $$ = (void*) $1; }
+ID <- < [a-zA-Z0-9_]+ > { $$ = pug_parser_strdup((void*) $1); }
 _      <- [ \t]*
 WS <- ([ \t] / EOL)*
 EOL    <- '\n' / '\r\n' / '\r' / ';'
@@ -23,6 +23,7 @@ EOL    <- '\n' / '\r\n' / '\r' / ';'
 %value "void*"
 
 %header {
+  void* pug_parser_strdup(void *);
   void* pug_parser_on_operation(void *, char, int, int);
   void* pug_parser_on_function_start(void *, char *name);
   void* pug_parser_on_function_end(void *);

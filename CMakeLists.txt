@@ -34,6 +34,7 @@ ExternalProject_add(
 
 # We'd like C99 support please.
 set(CMAKE_C_FLAGS "-std=gnu99 -g -O0")
+set(CMAKE_EXE_LINKER_FLAGS "-Wl,-rpath,${DEPS_PREFIX}/lib -L${DEPS_PREFIX}/lib -lcollections -ljit")
 
 # Generate the parser from the grammar please?
 add_custom_command(

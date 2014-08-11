@@ -933,7 +933,7 @@ static void pcc_action_ID_0(pug_parser_context_t *__pcc_ctx, pcc_thunk_t *__pcc_
 #define _1 pcc_get_capture_string(__pcc_ctx, __pcc_in->data.leaf.capts.buf[0])
 #define _1s __pcc_in->data.leaf.capts.buf[0]->range.start
 #define _1e __pcc_in->data.leaf.capts.buf[0]->range.end
-    __ = (void*) _1; 
+    __ = pug_parser_strdup((void*) _1); 
 #undef _1e
 #undef _1s
 #undef _1

@@ -3,6 +3,7 @@
 #ifndef PCC_INCLUDED__PARSER_H
 #define PCC_INCLUDED__PARSER_H
 
+void* pug_parser_strdup(void *);
 void* pug_parser_on_operation(void *, char, int, int);
 void* pug_parser_on_function_start(void *, char *name);
 void* pug_parser_on_function_end(void *);

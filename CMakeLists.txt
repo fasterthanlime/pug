@@ -16,10 +16,14 @@ ExternalProject_add(
   INSTALL_COMMAND make install
 )
 
+# GNU libjit - doesn't support out-of-tree build
+# so our 'download' step is to copy it, then we enable
+# CMake's BUILD_IN_SOURCE.
 ExternalProject_add(
   libjit
-  SOURCE_DIR ${DEPS}/libjit
-  CONFIGURE_COMMAND ${DEPS}/libjit/configure --prefix=${DEPS_PREFIX}
+  DOWNLOAD_COMMAND cmake -E copy_directory ${DEPS}/libjit ${CMAKE_CURRENT_BINARY_DIR}/libjit-source
+  SOURCE_DIR ${CMAKE_CURRENT_BINARY_DIR}/libjit-source
+  CONFIGURE_COMMAND ./configure --prefix=${DEPS_PREFIX}
   BUILD_IN_SOURCE 1
   BUILD_COMMAND make
   INSTALL_COMMAND make install

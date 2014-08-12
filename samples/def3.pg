@@ -1,0 +1,6 @@
+
+def line2 (x, y)
+  x - y
+  x * y
+end
+

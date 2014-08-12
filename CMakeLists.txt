@@ -4,8 +4,8 @@ project (pug)
 # External projects
 include(ExternalProject)
 
-set(DEPS ${CMAKE_CURRENT_SOURCE_DIR}/deps)
-set(DEPS_PREFIX ${DEPS}/prefix)
+set(DEPS ${CMAKE_SOURCE_DIR}/deps)
+set(DEPS_PREFIX ${CMAKE_BINARY_DIR}/deps-prefix)
 
 # Development dependencies
 add_subdirectory(devdeps)
@@ -59,5 +59,5 @@ include_directories(${PUG_INCLUDE_DIR} ${DEPS_PREFIX}/include)
 add_executable(pug ${PUG_HEADERS} ${PUG_SOURCES})
 
 # We need packcc to build the compiler
-add_dependencies(pug packcc)
+add_dependencies(pug packcc libjit libcollections)
 

@@ -3,34 +3,53 @@
 #include "parser.h"
 %}
 
-module = (WS module-core WS)+
-        | ( !EOL . )* EOL { printf("Error happened, I guess.\n") }
+module =  module-core
+          | WS ( !EOL . )*
+          EOL {
+            if(core->eof) { return; }
+            tokenPos;
+            char *message = "Expected toplevel";
+            if(G->buf[core->token[0]] == _CBRACK) {
+              message = "Unmatched closing bracket";
+            }
+            throwTokenError(PPE_EXP_TOPLEVEL, message);
+          }
 
-module-core = func-decl
+module-core = (WS func-decl WS)
 
-func-decl = - 'def' - name:ID { pug_parser_on_function_start(core->this, name)  }
-  - arg-list? WS EOL scope? EOL 'end' WS { pug_parser_on_function_end(core->this)  }
+func-decl = 'def'     -
+            name:ID   { pug_parser_on_function_start(core->this, name) } -
+            arg-list? -
+            EOL       -
+            scope     -
+            end-kw    ~{ throwError(PPE_EXP_STAT, "Expected statement") } { pug_parser_on_function_end(core->this) }
 
-arg-list = '(' WS (arg (WS ',' WS arg)*)? WS ')'
+arg-list = '(' WS
+           (arg WS
+              (',' WS arg WS)*
+           )?
+           WS clos-paren ~{ throwError(PPE_EXP_ARG, "Malformed function argument") }
+
 arg = name:ID { pug_parser_on_argument(core->this, name) }
 
-scope = (WS e:expression)*
+scope = (WS expression WS)*
 
 expression = s:sum { $$ = s }
 
 sum = l:product
-      ( '+' r:product { }
-      | '-' r:product { }
+      ( '+' WS r:product
+      | '-' WS r:product
       )*
 
 product = l:unary
-      ( '+' r:unary { }
-      | '-' r:unary { }
+      ( '*' WS r:unary
+      | '/' WS r:unary
       )*
 
-unary = ( '+' r:primary
-        | '-' r:primary
-        )*
+unary = ( '+' WS r:primary
+        | '-' WS r:primary
+        | r:primary     { $$ = r }
+        )
 
 primary = < [0-9]+ >
          | name:ID
@@ -38,10 +57,14 @@ primary = < [0-9]+ >
 
 # utils
 
-ID     = < [a-zA-Z0-9_]+ > { $$ = pug_parser_strdup(yytext)  }
+ID     = !kw < [a-zA-Z0-9_]+ > { $$ = pug_parser_strdup(yytext) }
 -      = [ \t]*
 WS     = ([ \t] | EOL)*
 EOL    = '\n' | '\r\n' | '\r' | ';'
+
+clos-paren = ')'
+end-kw = 'end'
+kw     = end-kw
 
 %%
 

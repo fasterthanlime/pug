@@ -2,29 +2,36 @@
 #include "pug.h"
 
 typedef struct pug_parser_state {
+  char *path;
   pug_module_t *module;
   struct lc_dlist stack; 
 } pug_parser_state_t;
+
+static int* global_token_p;
+static int* global_lineno_p;
 
 void pug_noop(void) {
   return;
 }
 
 void pug_parser_state_init(pug_parser_state_t *state) {
-  state->module = malloc(sizeof(pug_module_t));
-  dlist_create(&state->stack, (void*) pug_noop, malloc, free);
+  state->module = pug_malloc(sizeof(pug_module_t));
+  dlist_create(&state->stack, (void*) pug_noop, pug_malloc, pug_free);
   pug_module_init(state->module);
 }
 
 int main(int argc, char **argv) {
+  GC_INIT();
+
   if (argc < 2) {
     pug_bail("Usage: %s FILE.pg\n", argv[0]);
   }
 
   pug_parser_state_t *state = pug_malloc(sizeof(pug_parser_state_t));
   pug_parser_state_init(state);
+  state->path = argv[1];
 
-  pug_parser_parse(state, argv[1]);
+  pug_parser_parse(state, state->path);
 
   printf("Replaying...\n");
   for (int i = 0; i < vector_pug_function_size(&state->module->functions); i++) {
@@ -53,19 +60,19 @@ int main(int argc, char **argv) {
 }
 
 void* pug_parser_strdup(void *str) {
-  return strdup(str);
+  return GC_STRDUP(str);
 }
 
 void* pug_parser_on_operation(void *this, char op, int lhs, int rhs) {
   pug_parser_state_t *state = this;
-  pug_operation_t *operation = malloc(sizeof(pug_operation_t));
+  pug_operation_t *operation = pug_malloc(sizeof(pug_operation_t));
   *operation = (pug_operation_t) { op, lhs, rhs };
   return operation;
 }
 
 void *pug_parser_on_function_start(void *this, char *name) {
   pug_parser_state_t *state = this;
-  pug_function_t *function = malloc(sizeof(pug_function_t));
+  pug_function_t *function = pug_malloc(sizeof(pug_function_t));
   pug_function_init(function);
   function->name = name;
   dlist_insert_front(&state->stack, function);
@@ -75,7 +82,7 @@ void *pug_parser_on_function_start(void *this, char *name) {
 void *pug_parser_on_argument(void *this, char *name) {
   pug_parser_state_t *state = this;
   pug_function_t *function = state->stack.head->data;
-  pug_argument_t *arg = malloc(sizeof(pug_argument_t));
+  pug_argument_t *arg = pug_malloc(sizeof(pug_argument_t));
   pug_argument_init(arg);
   arg->name = name;
   vector_pug_argument_push(&function->args, arg);
@@ -90,8 +97,14 @@ void *pug_parser_on_function_end(void *this) {
   return function;
 }
 
-void pug_parser_set_token_position_pointer(void *this, int *p_token, int *p_lineno) {
-  printf("Got token pos: %d, %d, lineno: %d\n", p_token[0], p_token[1], p_lineno[0]);
+void pug_parser_set_token_position_pointer(void *this, int *token_p, int *lineno_p) {
+  global_token_p = token_p;
+  global_lineno_p = lineno_p;
   return;
+}
+
+void pug_parser_error(void *this, int code, char *message, int pos) {
+  struct pug_parser_state *state = this;
+  pug_bail("%s:%d %s\n", state->path, pos, message);
 }
 

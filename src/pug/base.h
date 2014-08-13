@@ -13,10 +13,10 @@
 #include <gc.h>
 
 // GC-powered memory allocation
-#define pug_malloc(N)      GC_malloc(N)
-#define pug_calloc(N, S)   GC_malloc((N) * (S))
-#define pug_realloc(B, N)  GC_realloc(B, N)
-#define pug_free           GC_free
+#define pug_malloc       GC_malloc
+#define pug_calloc(N, S) GC_malloc((N) * (S))
+#define pug_realloc      GC_realloc
+#define pug_free         GC_free
 
 // logging & stuff
 int pug_bail(char *fmt, ...);

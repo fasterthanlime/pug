@@ -1,5 +1,2 @@
-def add (x)
-end
-
-def sub (x, y)
+def noargs ()
 end

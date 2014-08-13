@@ -7,10 +7,19 @@
 #include <stdbool.h>
 #include <pug/base.h>
 
+// workaround for peg/leg/greg's shady parsing of "{}" even in
+// character class literals
+#define _OBRACK '{'
+#define _CBRACK '}'
+#define _OSBRACK "{"
+#define _CSBRACK "}"
+
 #define YY_ALLOC(N, D)      pug_malloc(N)
 #define YY_CALLOC(N, S, D)  pug_malloc((N) * (S))
 #define YY_REALLOC(B, N, D) pug_realloc(B, N)
 #define YY_FREE             pug_free
+
+void pug_parser_error(void *this, int code, char *message, int pos);
 
 // token opsition macros
 #define tokenPos { core->token[0] = thunk->begin + G->offset; core->token[1] = (thunk->end - thunk->begin); }
@@ -30,20 +39,33 @@
     } \
 }
 
+/////////////////////                 error IDs start                ////////////////////////
+
+// PPE stands for 'pug parser error'
+
+enum pug_parser_error_t {
+    PPE_EXP_TOPLEVEL = 1,
+    PPE_EXP_ARG,
+    PPE_EXP_STAT,
+    PPE_MISSING_OPERAND,
+};
+
+/////////////////////                  error IDs end                 ////////////////////////
+
 // Throw error at current parsing pos. Used when nothing valid matches.
-#define throwError(val, message) \
-    pug_parser_error(core->this, (val), (message), G->pos + G->offset)
+#define throwError(code, message) \
+    pug_parser_error(core->this, (code), (message), G->pos + G->offset)
 
 // Throw error at last matched token pos. Used with invalid tokens being
 // parsed for more helpful messages (e.g. misplaced suffixes).
-#define throwTokenError(val, message) \
-    pug_parser_error(core->this, (val), (message), core->token[0])
+#define throwTokenError(code, message) \
+    pug_parser_error(core->this, (code), (message), core->token[0])
 
 #define missingOp(c) { \
     rewindWhiteSpace; \
     char message[2048]; \
     snprintf(message, 2048, "Missing right operand for '%s' operator!\n", (c)); \
-    throwError(NQE_MISSING_OPERAND, message); \
+    throwError(PPE_MISSING_OPERAND, message); \
 }
 
 #define YYSTYPE void*

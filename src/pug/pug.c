@@ -77,6 +77,7 @@ void *pug_parser_on_argument(void *auxil, char *name) {
   pug_argument_init(arg);
   arg->name = name;
   vector_pug_argument_push(&function->args, arg);
+  return arg;
 }
 
 void *pug_parser_on_function_end(void *auxil) {
@@ -84,5 +85,6 @@ void *pug_parser_on_function_end(void *auxil) {
   pug_function_t *function = state->stack.head->data;
   dlist_remove_front(&state->stack);
   vector_pug_function_push(&state->module->functions, function);
+  return function;
 }
 

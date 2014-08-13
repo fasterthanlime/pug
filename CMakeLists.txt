@@ -33,7 +33,7 @@ ExternalProject_add(
 )
 
 # We'd like C99 support please.
-set(CMAKE_C_FLAGS "-std=gnu99 -g -O0")
+set(CMAKE_C_FLAGS "-std=gnu99 -g -O0 -Wno-implicit-int")
 set(PUG_LIBPATH_FLAGS "-L${DEPS_PREFIX}/lib -L${DEPS_PREFIX}/lib/x86_64 -L${DEPS_PREFIX}/lib/i386")
 set(PUG_LIB_FLAGS "-ljit -lcollections")
 set(CMAKE_EXE_LINKER_FLAGS "-Wl,-rpath,${DEPS_PREFIX}/lib ${PUG_LIBPATH_FLAGS} ${PUG_LIB_FLAGS}")

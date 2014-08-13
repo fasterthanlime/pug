@@ -1,14 +1,53 @@
 
 %{
-
 #include "parser.h"
+%}
 
-#define YY_XTYPE pug_parser_core *
-#define YY_XVAR core
+module = (WS module-core WS)+
+        | ( !EOL . )* EOL { printf("Error happened, I guess.\n") }
 
-#define YY_INPUT(buf, result, max_size, core) yyInput(buf, &result, max_size, core)
+module-core = func-decl
 
-static void yyInput(char *buf, int *result, int max_size, pug_parser_core *core) {
+func-decl = - 'def' - name:ID { pug_parser_on_function_start(core->this, name)  }
+  - arg-list? WS EOL scope? EOL 'end' WS { pug_parser_on_function_end(core->this)  }
+
+arg-list = '(' WS (arg (WS ',' WS arg)*)? WS ')'
+arg = name:ID { pug_parser_on_argument(core->this, name) }
+
+scope = (WS e:expression)*
+
+expression = s:sum { $$ = s }
+
+sum = l:product
+      ( '+' r:product { }
+      | '-' r:product { }
+      )*
+
+product = l:unary
+      ( '+' r:unary { }
+      | '-' r:unary { }
+      )*
+
+unary = ( '+' r:primary
+        | '-' r:primary
+        )*
+
+primary = < [0-9]+ >
+         | name:ID
+         | '(' e:expression ')'
+
+# utils
+
+ID     = < [a-zA-Z0-9_]+ > { $$ = pug_parser_strdup(yytext)  }
+-      = [ \t]*
+WS     = ([ \t] | EOL)*
+EOL    = '\n' | '\r\n' | '\r' | ';'
+
+%%
+
+///////////////////// IO interface: supports memory + files ////////////////////////
+
+void pug_parser_yyinput(char *buf, int *result, int max_size, pug_parser_core *core) {
     (*result) = core->io.read(buf, max_size, core);
     if((*result) == 0 && core->eof == 0) {
         core->eof = 1;
@@ -41,52 +80,6 @@ static void yyInput(char *buf, int *result, int max_size, pug_parser_core *core)
         }
     }
 }
-
-%}
-
-Module = (WS ModuleCore WS)+
-        | ( !EOL . )* EOL { printf("Error happened, I guess.\n") }
-
-ModuleCore = FuncDecl
-
-FuncDecl = - 'def' - name:ID { pug_parser_on_function_start(core->this, name)  }
-  - ArgList? WS EOL Scope? EOL 'end' WS { pug_parser_on_function_end(core->this)  }
-
-ArgList = '(' WS (Arg (WS ',' WS Arg)*)? WS ')'
-Arg = name:ID { pug_parser_on_argument(core->this, name) }
-
-Scope = (WS e:Expression)*
-
-Expression = s:Sum { $$ = s }
-
-Sum = l:Product
-      ( '+' r:Product { }
-      | '-' r:Product { }
-      )*
-
-Product = l:Unary
-      ( '+' r:Unary { }
-      | '-' r:Unary { }
-      )*
-
-Unary = ( '+' r:Primary
-        | '-' r:Primary
-        )*
-
-Primary = < [0-9]+ >
-         | name:ID
-         | '(' e:Expression ')'
-
-# utils
-
-ID = < [a-zA-Z0-9_]+ > { $$ = pug_parser_strdup(yytext)  }
--      = [ \t]*
-WS = ([ \t] | EOL)*
-EOL    = '\n' | '\r\n' | '\r' | ';'
-
-%%
-
-///////////////////// IO interface: supports memory + files ////////////////////////
 
 static int _pug_parser_memread(void *ptr, size_t size, pug_parser_core *core) {
     char *source = (char *) core->stream;

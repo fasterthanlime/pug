@@ -90,6 +90,12 @@ typedef struct _pug_parser_core {
     int eof;
 } pug_parser_core;
 
+#define YY_XTYPE pug_parser_core *
+#define YY_XVAR core
+
+void pug_parser_yyinput(char *buf, int *result, int max_size, pug_parser_core *core);
+#define YY_INPUT(buf, result, max_size, core) pug_parser_yyinput(buf, &result, max_size, core)
+
 ////////////////////// interface //////////////////////
 
 int pug_parser_parse(void *this, char *path);

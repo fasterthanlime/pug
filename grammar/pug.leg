@@ -1,0 +1,181 @@
+
+%{
+
+#include "parser.h"
+
+#define YY_XTYPE pug_parser_core *
+#define YY_XVAR core
+
+#define YY_INPUT(buf, result, max_size, core) yyInput(buf, &result, max_size, core)
+
+static void yyInput(char *buf, int *result, int max_size, pug_parser_core *core) {
+    (*result) = core->io.read(buf, max_size, core);
+    if((*result) == 0 && core->eof == 0) {
+        core->eof = 1;
+        (*buf) = '\n';
+        (*result) = 1;
+        return;
+    }
+    for(int i = 0; i < (*result) - 1; i++) {
+        // if we encounter a line separation ('\' followed by EOL),
+        // replace both the '\' and the EOL (CRLF or LF) with spaces -
+        // it won't hurt the parsing and is faster than memmov-ing the
+        // rest of the buffer in place.
+        if(buf[i] == '\\') {
+            if(buf[i+1] == '\r') {
+                buf[i] = ' ';
+                buf[i+1] = ' ';
+                if(buf[i+2] == '\n') {
+                    // CRLF (Win32)
+                    buf[i+2] = ' ';
+                    i += 2; continue;
+                }
+                // CR (AIX?)
+                i += 1; continue;
+            } else if(buf[i+1] == '\n') {
+                // LF (Linux, Mac)
+                buf[i] = ' ';
+                buf[i+1] = ' ';
+                i += 1; continue;
+            }
+        }
+    }
+}
+
+%}
+
+Module = (WS ModuleCore WS)+
+        | ( !EOL . )* EOL { printf("Error happened, I guess.\n") }
+
+ModuleCore = FuncDecl
+
+FuncDecl = - 'def' - name:ID { pug_parser_on_function_start(core->this, name)  }
+  - ArgList? WS EOL Scope? EOL 'end' WS { pug_parser_on_function_end(core->this)  }
+
+ArgList = '(' WS (Arg (WS ',' WS Arg)*)? WS ')'
+Arg = name:ID { pug_parser_on_argument(core->this, name) }
+
+Scope = (WS e:Expression)*
+
+Expression = s:Sum { $$ = s }
+
+Sum = l:Product
+      ( '+' r:Product { }
+      | '-' r:Product { }
+      )*
+
+Product = l:Unary
+      ( '+' r:Unary { }
+      | '-' r:Unary { }
+      )*
+
+Unary = ( '+' r:Primary
+        | '-' r:Primary
+        )*
+
+Primary = < [0-9]+ >
+         | name:ID
+         | '(' e:Expression ')'
+
+# utils
+
+ID = < [a-zA-Z0-9_]+ > { $$ = pug_parser_strdup(yytext)  }
+-      = [ \t]*
+WS = ([ \t] | EOL)*
+EOL    = '\n' | '\r\n' | '\r' | ';'
+
+%%
+
+///////////////////// IO interface: supports memory + files ////////////////////////
+
+static int _pug_parser_memread(void *ptr, size_t size, pug_parser_core *core) {
+    char *source = (char *) core->stream;
+    size_t tocopy = size;
+    size_t remaining = core->streamlen - core->streamoffset;
+    if (tocopy > remaining) {
+      tocopy = remaining;
+    }
+    memcpy(ptr, source + core->streamoffset, tocopy);
+    core->streamoffset += tocopy;
+    return (int) tocopy;
+}
+
+static int _pug_parser_fread(void *ptr, size_t size, pug_parser_core *core) {
+    FILE *stream = (FILE *) core->stream;
+    return fread(ptr, 1, size, (FILE*) stream);
+}
+
+
+int pug_parser_memparse(void *this, char *buffer, ssize_t len) {
+
+    GREG *G = YY_ALLOC(sizeof(GREG), 0);
+    G->buflen = 0;
+
+    pug_parser_core *core = YY_ALLOC(sizeof(pug_parser_core), 0);
+    core->yylineno = 0;
+    core->eof = 0;
+    core->this = this;
+    core->path = NULL;
+    core->stream = buffer;
+    core->streamoffset = 0;
+    core->streamlen = len;
+    if(!core->stream) {
+        printf("Null input buffer\n");
+        return -1;
+    }
+    if(len < 0) {
+        printf("Invalid input buffer length\n");
+        return -1;
+    }
+    pug_parser_set_token_position_pointer(this, core->token, &(core->yylineno));
+    core->io = (struct _pug_parser_io) {
+      (_pug_parser_io_read)_pug_parser_memread
+    };
+
+    G->data = core;
+
+    while (yyparse(G)) {}
+
+    return 0;
+
+}
+
+int pug_parser_parse(void *this, char *path) {
+
+    GREG *G = YY_ALLOC(sizeof(GREG), 0);
+    G->buflen = 0;
+
+    pug_parser_core *core = YY_ALLOC(sizeof(pug_parser_core), 0);
+    core->yylineno = 0;
+    core->eof = 0;
+    core->this = this;
+    core->path = path;
+
+#if defined(__WIN32__) || defined(__WIN64__)
+    // we need to use binary mode because text mode on MinGW
+    // does CR->LF conversion and we handle that ourselves.
+    core->stream = fopen(path, "rb");
+#else
+    core->stream = fopen(path, "r");
+#endif
+
+    core->streamoffset = -1;
+    core->streamlen = -1;
+    if(!core->stream) {
+        printf("Not found: %s\n", path);
+        return -1;
+    }
+    pug_parser_set_token_position_pointer(this, core->token, &(core->yylineno));
+    core->io = (struct _pug_parser_io) {
+      (_pug_parser_io_read)_pug_parser_fread
+    };
+
+    G->data = core;
+
+    while (yyparse(G)) {}
+    fclose(core->stream);
+
+    return 0;
+
+}
+

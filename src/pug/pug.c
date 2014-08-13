@@ -16,13 +16,15 @@ void pug_parser_state_init(pug_parser_state_t *state) {
   pug_module_init(state->module);
 }
 
-int main() {
-  pug_parser_state_t *state = malloc(sizeof(pug_parser_state_t));
+int main(int argc, char **argv) {
+  if (argc < 2) {
+    pug_bail("Usage: %s FILE.pg\n", argv[0]);
+  }
+
+  pug_parser_state_t *state = pug_malloc(sizeof(pug_parser_state_t));
   pug_parser_state_init(state);
 
-  pug_parser_context_t *ctx = pug_parser_create(state);
-  pug_parser_parse(ctx, NULL);
-  pug_parser_destroy(ctx);
+  pug_parser_parse(state, argv[1]);
 
   printf("Replaying...\n");
   for (int i = 0; i < vector_pug_function_size(&state->module->functions); i++) {
@@ -54,15 +56,15 @@ void* pug_parser_strdup(void *str) {
   return strdup(str);
 }
 
-void* pug_parser_on_operation(void *auxil, char op, int lhs, int rhs) {
-  pug_parser_state_t *state = auxil;
+void* pug_parser_on_operation(void *this, char op, int lhs, int rhs) {
+  pug_parser_state_t *state = this;
   pug_operation_t *operation = malloc(sizeof(pug_operation_t));
   *operation = (pug_operation_t) { op, lhs, rhs };
   return operation;
 }
 
-void *pug_parser_on_function_start(void *auxil, char *name) {
-  pug_parser_state_t *state = auxil;
+void *pug_parser_on_function_start(void *this, char *name) {
+  pug_parser_state_t *state = this;
   pug_function_t *function = malloc(sizeof(pug_function_t));
   pug_function_init(function);
   function->name = name;
@@ -70,8 +72,8 @@ void *pug_parser_on_function_start(void *auxil, char *name) {
   return function;
 }
 
-void *pug_parser_on_argument(void *auxil, char *name) {
-  pug_parser_state_t *state = auxil;
+void *pug_parser_on_argument(void *this, char *name) {
+  pug_parser_state_t *state = this;
   pug_function_t *function = state->stack.head->data;
   pug_argument_t *arg = malloc(sizeof(pug_argument_t));
   pug_argument_init(arg);
@@ -80,11 +82,16 @@ void *pug_parser_on_argument(void *auxil, char *name) {
   return arg;
 }
 
-void *pug_parser_on_function_end(void *auxil) {
-  pug_parser_state_t *state = auxil;
+void *pug_parser_on_function_end(void *this) {
+  pug_parser_state_t *state = this;
   pug_function_t *function = state->stack.head->data;
   dlist_remove_front(&state->stack);
   vector_pug_function_push(&state->module->functions, function);
   return function;
+}
+
+void pug_parser_set_token_position_pointer(void *this, int *p_token, int *p_lineno) {
+  printf("Got token pos: %d, %d, lineno: %d\n", p_token[0], p_token[1], p_lineno[0]);
+  return;
 }
 

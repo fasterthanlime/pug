@@ -1,0 +1,3 @@
+[submodule "deps/greg"]
+	path = deps/greg
+	url = https://github.com/fasterthanlime/greg.git

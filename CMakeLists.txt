@@ -7,8 +7,14 @@ include(ExternalProject)
 set(DEPS ${CMAKE_SOURCE_DIR}/deps)
 set(DEPS_PREFIX ${CMAKE_BINARY_DIR}/deps-prefix)
 
-# Development dependencies
-add_subdirectory(devdeps)
+# Boehm's garbage collector
+ExternalProject_add(
+  gc
+  SOURCE_DIR ${DEPS}/gc
+  CONFIGURE_COMMAND ${DEPS}/gc/configure --prefix=${DEPS_PREFIX} --disable-shared
+  BUILD_COMMAND make
+  INSTALL_COMMAND make install
+)
 
 # Basic data structures for C
 ExternalProject_add(
@@ -32,20 +38,25 @@ ExternalProject_add(
   INSTALL_COMMAND make install
 )
 
+# Parser generator
+ExternalProject_add(
+  greg
+  SOURCE_DIR ${DEPS}/greg
+  CMAKE_COMMAND ${CMAKE_COMMAND}
+  CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:STRING=${CMAKE_CURRENT_BINARY_DIR}/deps-prefix
+)
+
 # We'd like C99 support please.
 set(CMAKE_C_FLAGS "-std=gnu99 -g -O0 -Wno-implicit-int")
 set(PUG_LIBPATH_FLAGS "-L${DEPS_PREFIX}/lib -L${DEPS_PREFIX}/lib/x86_64 -L${DEPS_PREFIX}/lib/i386")
-set(PUG_LIB_FLAGS "-ljit -lcollections")
+set(PUG_LIB_FLAGS "-ljit -lcollections -lgc")
 set(CMAKE_EXE_LINKER_FLAGS "-Wl,-rpath,${DEPS_PREFIX}/lib ${PUG_LIBPATH_FLAGS} ${PUG_LIB_FLAGS}")
 
 # Generate the parser from the grammar please?
 add_custom_command(
-  OUTPUT ${CMAKE_SOURCE_DIR}/src/pug-parser/parser.c ${CMAKE_SOURCE_DIR}/src/pug-parser/parser.h
-  COMMAND ${CMAKE_BINARY_DIR}/devdeps/packcc/packcc -o parser ${CMAKE_SOURCE_DIR}/grammar/pug.peg
-  COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_SOURCE_DIR}/src/pug-parser
-  COMMAND ${CMAKE_COMMAND} -E rename ${CMAKE_BINARY_DIR}/parser.c ${CMAKE_SOURCE_DIR}/src/pug-parser/parser.c
-  COMMAND ${CMAKE_COMMAND} -E rename ${CMAKE_BINARY_DIR}/parser.h ${CMAKE_SOURCE_DIR}/src/pug-parser/parser.h
-  DEPENDS ${CMAKE_SOURCE_DIR}/grammar/pug.peg devdeps
+  OUTPUT ${CMAKE_SOURCE_DIR}/src/pug-parser/parser.c
+  COMMAND ${CMAKE_BINARY_DIR}/deps-prefix/bin/greg -o ${CMAKE_SOURCE_DIR}/src/pug-parser/parser.c ${CMAKE_SOURCE_DIR}/grammar/pug.leg
+  DEPENDS ${CMAKE_SOURCE_DIR}/grammar/pug.leg
 )
 
 # All source files
@@ -60,6 +71,6 @@ include_directories(${PUG_INCLUDE_DIR} ${DEPS_PREFIX}/include)
 
 add_executable(pug ${PUG_HEADERS} ${PUG_SOURCES})
 
-# We need packcc to build the compiler
-add_dependencies(pug packcc libjit libcollections)
+# We need our deps to build the compiler
+add_dependencies(pug greg libjit libcollections gc)
 

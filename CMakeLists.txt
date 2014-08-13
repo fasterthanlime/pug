@@ -74,3 +74,7 @@ add_executable(pug ${PUG_HEADERS} ${PUG_SOURCES})
 # We need our deps to build the compiler
 add_dependencies(pug greg libjit libcollections gc)
 
+# test target
+add_custom_target(tests "${CMAKE_SOURCE_DIR}/tests.sh")
+add_dependencies(tests pug)
+

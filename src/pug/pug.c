@@ -33,10 +33,10 @@ int main(int argc, char **argv) {
 
   pug_parser_parse(state, state->path);
 
-  printf("Replaying...\n");
+  printf("[AST]\n");
   for (int i = 0; i < vector_pug_function_size(&state->module->functions); i++) {
     pug_function_t *function = vector_pug_function_get(&state->module->functions, i);
-    printf("Had function %s", function->name);
+    printf("  - function %s", function->name);
     bool first = true;
     int num_args = vector_pug_argument_size(&function->args);
 

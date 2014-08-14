@@ -4,6 +4,7 @@ project (pug)
 # External projects
 include(ExternalProject)
 
+set(DEPS_LIST gc libcollections libjit greg jansson)
 set(DEPS ${CMAKE_SOURCE_DIR}/deps)
 set(DEPS_PREFIX ${CMAKE_BINARY_DIR}/deps-prefix)
 
@@ -43,7 +44,15 @@ ExternalProject_add(
   greg
   SOURCE_DIR ${DEPS}/greg
   CMAKE_COMMAND ${CMAKE_COMMAND}
-  CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:STRING=${CMAKE_CURRENT_BINARY_DIR}/deps-prefix
+  CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:STRING=${DEPS_PREFIX}
+)
+
+# JSON loading/saving
+ExternalProject_add(
+  jansson
+  SOURCE_DIR ${DEPS}/jansson
+  CMAKE_COMMAND ${CMAKE_COMMAND}
+  CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:STRING=${DEPS_PREFIX}
 )
 
 # We'd like C99 support please.
@@ -72,7 +81,7 @@ include_directories(${PUG_INCLUDE_DIR} ${DEPS_PREFIX}/include)
 add_executable(pug ${PUG_HEADERS} ${PUG_SOURCES})
 
 # We need our deps to build the compiler
-add_dependencies(pug greg libjit libcollections gc)
+add_dependencies(pug ${DEPS_LIST})
 
 # test target
 add_custom_target(tests "${CMAKE_SOURCE_DIR}/tests.sh")

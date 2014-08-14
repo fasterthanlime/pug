@@ -4,6 +4,11 @@
 #include <stdarg.h>
 #include <stdio.h>
 
+int pug_init() {
+  GC_INIT();
+  json_set_alloc_funcs(GC_malloc, GC_free);
+}
+
 int pug_bail(char *fmt, ...) {
   va_list args;
 

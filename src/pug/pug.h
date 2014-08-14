@@ -10,6 +10,7 @@
 #include "ast/module.h"
 #include "ast/function.h"
 #include "ast/operation.h"
+#include "ast/dumper.h"
 
 #endif // __PUG_PUG__H__
 

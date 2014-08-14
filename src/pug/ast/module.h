@@ -14,6 +14,7 @@ typedef struct pug_module {
 
 DECLARE_VECTOR_TYPE   ( pug_module, pug_module_t )
 
-void pug_module_init(pug_module_t *m);
+void pug_module_init(pug_module_t *module, char *name);
 
 #endif // __PUG_AST_MODULE_H__
+

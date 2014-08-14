@@ -14,10 +14,17 @@ void pug_noop(void) {
   return;
 }
 
-void pug_parser_state_init(pug_parser_state_t *state) {
+void pug_parser_state_init(pug_parser_state_t *state, char *path) {
+  state->path = path;
   state->module = pug_malloc(sizeof(pug_module_t));
   dlist_create(&state->stack, (void*) pug_noop, pug_malloc, pug_free);
-  pug_module_init(state->module);
+
+  size_t len = strlen(path);
+  size_t namelen = len - 3;
+  char *name = pug_malloc(namelen + 1);
+  memcpy(name, path, namelen);
+  name[namelen] = '\0';
+  pug_module_init(state->module, name);
 }
 
 int main(int argc, char **argv) {
@@ -28,33 +35,44 @@ int main(int argc, char **argv) {
   }
 
   pug_parser_state_t *state = pug_malloc(sizeof(pug_parser_state_t));
-  pug_parser_state_init(state);
-  state->path = argv[1];
+  pug_parser_state_init(state, argv[1]);
 
   pug_parser_parse(state, state->path);
 
-  printf("[AST]\n");
-  for (int i = 0; i < vector_pug_function_size(&state->module->functions); i++) {
-    pug_function_t *function = vector_pug_function_get(&state->module->functions, i);
-    printf("  - function %s", function->name);
-    bool first = true;
-    int num_args = vector_pug_argument_size(&function->args);
+  // dump the module
+  const char *ext = ".json";
+  size_t extlen = strlen(ext);
+  size_t namelen = strlen(state->module->name);
+  char *dumppath = pug_malloc(namelen + extlen + 1);
+  memcpy(dumppath, state->module->name, namelen);
+  memcpy(dumppath + namelen, ext, extlen);
+  dumppath[namelen + extlen] = '\0';
 
-    if (num_args > 0) {
-      printf("(");
-      for (int j = 0; j < num_args; j++) {
-        pug_argument_t *arg = vector_pug_argument_get(&function->args, j);
-        if (first) {
-          first = false;
-        } else {
-          printf(", ");
-        }
-        printf("%s", arg->name);
-      }
-      printf(")");
-    }
-    printf("%s", "\n");
-  }
+  printf("Dumping to %s\n", dumppath);
+  pug_module_dump_file(state->module, dumppath);
+
+  /* printf("[AST]\n"); */
+  /* for (int i = 0; i < vector_pug_function_size(&state->module->functions); i++) { */
+  /*   pug_function_t *function = vector_pug_function_get(&state->module->functions, i); */
+  /*   printf("  - function %s", function->name); */
+  /*   bool first = true; */
+  /*   int num_args = vector_pug_argument_size(&function->args); */
+
+  /*   if (num_args > 0) { */
+  /*     printf("("); */
+  /*     for (int j = 0; j < num_args; j++) { */
+  /*       pug_argument_t *arg = vector_pug_argument_get(&function->args, j); */
+  /*       if (first) { */
+  /*         first = false; */
+  /*       } else { */
+  /*         printf(", "); */
+  /*       } */
+  /*       printf("%s", arg->name); */
+  /*     } */
+  /*     printf(")"); */
+  /*   } */
+  /*   printf("%s", "\n"); */
+  /* } */
 
   return 0;
 }

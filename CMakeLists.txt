@@ -4,7 +4,7 @@ project (pug)
 # External projects
 include(ExternalProject)
 
-set(DEPS_LIST gc libcollections libjit greg jansson)
+set(DEPS_LIST gc libcollections libjit greg jansson bstring)
 set(DEPS ${CMAKE_SOURCE_DIR}/deps)
 set(DEPS_PREFIX ${CMAKE_BINARY_DIR}/deps-prefix)
 
@@ -55,10 +55,18 @@ ExternalProject_add(
   CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:STRING=${DEPS_PREFIX}
 )
 
+# C string manipulation
+ExternalProject_add(
+  bstring
+  SOURCE_DIR ${DEPS}/bstring
+  CMAKE_COMMAND ${CMAKE_COMMAND}
+  CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:STRING=${DEPS_PREFIX}
+)
+
 # We'd like C99 support please.
 set(CMAKE_C_FLAGS "-std=gnu99 -g -O0 -Wno-implicit-int")
 set(PUG_LIBPATH_FLAGS "-L${DEPS_PREFIX}/lib -L${DEPS_PREFIX}/lib/x86_64 -L${DEPS_PREFIX}/lib/i386")
-set(PUG_LIB_FLAGS "-ljit -lcollections -lgc -ljansson")
+set(PUG_LIB_FLAGS "-ljit -lcollections -lgc -ljansson -lbstring")
 set(CMAKE_EXE_LINKER_FLAGS "-Wl,-rpath,${DEPS_PREFIX}/lib ${PUG_LIBPATH_FLAGS} ${PUG_LIB_FLAGS}")
 
 # Generate the parser from the grammar please?

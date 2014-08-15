@@ -5,9 +5,10 @@
 #define __PUG_AST_FUNCTION_H__
 
 #include <libcollections/vector.h>
+#include <pug/base.h>
 
 typedef struct pug_argument {
-  char *name;
+  bstring name;
 } pug_argument_t;
 
 DECLARE_VECTOR_TYPE   ( pug_argument, pug_argument_t )
@@ -15,7 +16,7 @@ DECLARE_VECTOR_TYPE   ( pug_argument, pug_argument_t )
 void pug_argument_init(pug_argument_t *f);
 
 typedef struct pug_function {
-  char *name;
+  bstring name;
   vector_pug_argument_t args;
 } pug_function_t;
 

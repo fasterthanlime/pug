@@ -323,8 +323,8 @@ YY_ACTION(void) yy_1_ID(GREG *G, char *yytext, int yyleng, yythunk *thunk, YY_XT
 {
   yyprintf((stderr, "do yy_1_ID"));
   yyprintfvTcontext(yytext);
-  yyprintf((stderr, "\n  {yy = pug_parser_strdup(yytext) }\n"));
-  yy = pug_parser_strdup(yytext) ;
+  yyprintf((stderr, "\n  {yy = bfromcstr(yytext) }\n"));
+  yy = bfromcstr(yytext) ;
 }
 YY_ACTION(void) yy_1_unary(GREG *G, char *yytext, int yyleng, yythunk *thunk, YY_XTYPE YY_XVAR)
 {
@@ -378,18 +378,22 @@ YY_ACTION(void) yy_1_module(GREG *G, char *yytext, int yyleng, yythunk *thunk, Y
   yyprintf((stderr, "\n  {\n\
             if(core->eof) { return; }\n\
             tokenPos;\n\
-            char *message = \"Expected toplevel\";\n\
+            bstring message;\n\
             if(G->buf[core->token[0]] == _CBRACK) {\n\
-              message = \"Unmatched closing bracket\";\n\
+              message = bfromcstr(\"Unmatched closing bracket\");\n\
+            } else {\n\
+              message = bfromcstr(\"Expected toplevel\");\n\
             }\n\
             throwTokenError(PPE_EXP_TOPLEVEL, message);\n\
           }\n"));
   
             if(core->eof) { return; }
             tokenPos;
-            char *message = "Expected toplevel";
+            bstring message;
             if(G->buf[core->token[0]] == _CBRACK) {
-              message = "Unmatched closing bracket";
+              message = bfromcstr("Unmatched closing bracket");
+            } else {
+              message = bfromcstr("Expected toplevel");
             }
             throwTokenError(PPE_EXP_TOPLEVEL, message);
           ;
@@ -630,7 +634,7 @@ YY_RULE(int) yy_arg_list(GREG *G)
   l30:;	  G->pos= yypos30; G->thunkpos= yythunkpos30;
   }
   l31:;	  if (!yy_WS(G))  goto l29;
-  if (!yy_clos_paren(G)) {  { YY_XTYPE YY_XVAR = (YY_XTYPE) G->data; int yyindex = G->offset + G->pos;  throwError(PPE_EXP_ARG, "Malformed function argument") ; } goto l29; }
+  if (!yy_clos_paren(G)) {  { YY_XTYPE YY_XVAR = (YY_XTYPE) G->data; int yyindex = G->offset + G->pos;  throwError(PPE_EXP_ARG, bfromcstr("Malformed function argument")) ; } goto l29; }
   yyprintf((stderr, "  ok   arg_list"));
   yyprintfGcontext;
   yyprintf((stderr, "\n"));
@@ -698,7 +702,7 @@ YY_RULE(int) yy_func_decl(GREG *G)
   if (!yy__(G))  goto l41;
   if (!yy_scope(G))  goto l41;
   if (!yy__(G))  goto l41;
-  if (!yy_end_kw(G)) {  { YY_XTYPE YY_XVAR = (YY_XTYPE) G->data; int yyindex = G->offset + G->pos;  throwError(PPE_EXP_STAT, "Expected statement") ; } goto l41; }
+  if (!yy_end_kw(G)) {  { YY_XTYPE YY_XVAR = (YY_XTYPE) G->data; int yyindex = G->offset + G->pos;  throwError(PPE_EXP_STAT, bfromcstr("Expected statement")) ; } goto l41; }
   yyDo(G, yy_2_func_decl, G->begin, G->end, "yy_2_func_decl");
   yyprintf((stderr, "  ok   func_decl"));
   yyprintfGcontext;

@@ -79,7 +79,7 @@ void* pug_parser_on_operation(void *this, char op, int lhs, int rhs) {
   return operation;
 }
 
-void *pug_parser_on_function_start(void *this, char *name) {
+void *pug_parser_on_function_start(void *this, bstring name) {
   pug_parser_state_t *state = this;
   pug_function_t *function = pug_malloc(sizeof(pug_function_t));
   pug_function_init(function);
@@ -88,7 +88,7 @@ void *pug_parser_on_function_start(void *this, char *name) {
   return function;
 }
 
-void *pug_parser_on_argument(void *this, char *name) {
+void *pug_parser_on_argument(void *this, bstring name) {
   pug_parser_state_t *state = this;
   pug_function_t *function = state->stack.head->data;
   pug_argument_t *arg = pug_malloc(sizeof(pug_argument_t));
@@ -112,7 +112,7 @@ void pug_parser_set_token_position_pointer(void *this, int *token_p, int *lineno
   return;
 }
 
-void pug_parser_error(void *this, int code, char *message, int pos) {
+void pug_parser_error(void *this, int code, bstring message, int pos) {
   struct pug_parser_state *state = this;
   pug_bail("%s:%d %s\n", state->path, pos, message);
 }

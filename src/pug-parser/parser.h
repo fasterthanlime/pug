@@ -19,7 +19,7 @@
 #define YY_REALLOC(B, N, D) pug_realloc(B, N)
 #define YY_FREE             pug_free
 
-void pug_parser_error(void *this, int code, char *message, int pos);
+void pug_parser_error(void *this, int code, bstring message, int pos);
 
 // token opsition macros
 #define tokenPos { core->token[0] = thunk->begin + G->offset; core->token[1] = (thunk->end - thunk->begin); }
@@ -29,7 +29,7 @@ void pug_parser_error(void *this, int code, char *message, int pos);
     /* only rewind if at end of file */ \
     if (core->eof == 1) { \
       int originalPos = G->pos; \
-      char *c = G->buf + G->pos; \
+      bstring c = G->buf + G->pos; \
       /* rewind until we reach something non-whitespace */ \
       while (G->pos > 0) { \
         c--; G->pos--; \
@@ -63,8 +63,7 @@ enum pug_parser_error_t {
 
 #define missingOp(c) { \
     rewindWhiteSpace; \
-    char message[2048]; \
-    snprintf(message, 2048, "Missing right operand for '%s' operator!\n", (c)); \
+    bstring message = bformat("Missing right operand for '%s' operator!", (c)); \
     throwError(PPE_MISSING_OPERAND, message); \
 }
 
@@ -127,8 +126,8 @@ int pug_parser_parse(void *this, bstring path);
 void pug_parser_set_token_position_pointer(void *, int *, int *);
 void* pug_parser_strdup(void *);
 void* pug_parser_on_operation(void *, char, int, int);
-void* pug_parser_on_function_start(void *, char *name);
-void* pug_parser_on_argument(void *, char *name);
+void* pug_parser_on_function_start(void *, bstring name);
+void* pug_parser_on_argument(void *, bstring name);
 void* pug_parser_on_function_end(void *);
 
 #endif // __PUG_PARSER_H__

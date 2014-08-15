@@ -12,6 +12,10 @@
 
 #include <gc.h>
 #include <jansson.h>
+#include <bstrlib.h>
+
+// jansson <-> bstring bridge
+#define json_bstring(x) json_string(bdata(x))
 
 // GC-powered memory allocation
 #define pug_malloc       GC_malloc

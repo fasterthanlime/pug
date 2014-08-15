@@ -30,6 +30,24 @@
 #include "memdbg.h"
 #endif
 
+#ifdef BSTR_USE_GC
+
+#include <gc.h>
+
+#ifndef bstr__alloc
+#define bstr__alloc(x) GC_malloc (x)
+#endif
+
+#ifndef bstr__free
+#define bstr__free(p) GC_free (p)
+#endif
+
+#ifndef bstr__realloc
+#define bstr__realloc(p,x) GC_realloc ((p), (x))
+#endif
+
+#else
+
 #ifndef bstr__alloc
 #define bstr__alloc(x) malloc (x)
 #endif
@@ -40,6 +58,8 @@
 
 #ifndef bstr__realloc
 #define bstr__realloc(p,x) realloc ((p), (x))
+#endif
+
 #endif
 
 #ifndef bstr__memcpy

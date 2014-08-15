@@ -95,7 +95,7 @@ typedef struct _pug_parser_core {
     /* Current line number */
     int yylineno;
     /* Path of the file we're parsing. */
-    char* path;
+    bstring path;
     /* The stream we're reading from. */
     void *stream;
     /* Length of the stream (only used for memory streams) */
@@ -120,7 +120,7 @@ void pug_parser_yyinput(char *buf, int *result, int max_size, pug_parser_core *c
 
 ////////////////////// interface //////////////////////
 
-int pug_parser_parse(void *this, char *path);
+int pug_parser_parse(void *this, bstring path);
 
 ////////////////////// callbacks //////////////////////
 

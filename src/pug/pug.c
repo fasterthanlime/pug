@@ -2,7 +2,7 @@
 #include "pug.h"
 
 typedef struct pug_parser_state {
-  char *path;
+  bstring path;
   pug_module_t *module;
   struct lc_dlist stack; 
 } pug_parser_state_t;
@@ -14,16 +14,12 @@ void pug_noop(void) {
   return;
 }
 
-void pug_parser_state_init(pug_parser_state_t *state, char *path) {
+void pug_parser_state_init(pug_parser_state_t *state, bstring path) {
   state->path = path;
   state->module = pug_malloc(sizeof(pug_module_t));
   dlist_create(&state->stack, (void*) pug_noop, pug_malloc, pug_free);
 
-  size_t len = strlen(path);
-  size_t namelen = len - 3;
-  char *name = pug_malloc(namelen + 1);
-  memcpy(name, path, namelen);
-  name[namelen] = '\0';
+  bstring name = bmidstr(path, 0, blength(path) - 3);
   pug_module_init(state->module, name);
 }
 
@@ -35,20 +31,15 @@ int main(int argc, char **argv) {
   }
 
   pug_parser_state_t *state = pug_malloc(sizeof(pug_parser_state_t));
-  pug_parser_state_init(state, argv[1]);
+  pug_parser_state_init(state, bfromcstr(argv[1]));
 
   pug_parser_parse(state, state->path);
 
   // dump the module
-  const char *ext = ".json";
-  size_t extlen = strlen(ext);
-  size_t namelen = strlen(state->module->name);
-  char *dumppath = pug_malloc(namelen + extlen + 1);
-  memcpy(dumppath, state->module->name, namelen);
-  memcpy(dumppath + namelen, ext, extlen);
-  dumppath[namelen + extlen] = '\0';
+  bstring dumppath = bstrcpy(state->module->name);
+  bconcat(dumppath, bfromcstr(".json"));
 
-  printf("Dumping to %s\n", dumppath);
+  printf("Dumping to %s\n", bdata(dumppath));
   pug_module_dump_file(state->module, dumppath);
 
   /* printf("[AST]\n"); */

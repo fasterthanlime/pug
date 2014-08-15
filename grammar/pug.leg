@@ -156,8 +156,7 @@ int pug_parser_memparse(void *this, char *buffer, ssize_t len) {
 
 }
 
-int pug_parser_parse(void *this, char *path) {
-
+int pug_parser_parse(void *this, bstring path) {
     GREG *G = YY_ALLOC(sizeof(GREG), 0);
     G->buflen = 0;
 
@@ -170,15 +169,15 @@ int pug_parser_parse(void *this, char *path) {
 #if defined(__WIN32__) || defined(__WIN64__)
     // we need to use binary mode because text mode on MinGW
     // does CR->LF conversion and we handle that ourselves.
-    core->stream = fopen(path, "rb");
+    core->stream = fopen(bdata(path), "rb");
 #else
-    core->stream = fopen(path, "r");
+    core->stream = fopen(bdata(path), "r");
 #endif
 
     core->streamoffset = -1;
     core->streamlen = -1;
     if(!core->stream) {
-        printf("Not found: %s\n", path);
+        printf("Not found: %s\n", bdata(path));
         return -1;
     }
     pug_parser_set_token_position_pointer(this, core->token, &(core->yylineno));

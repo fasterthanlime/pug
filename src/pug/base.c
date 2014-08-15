@@ -7,6 +7,7 @@
 int pug_init() {
   GC_INIT();
   json_set_alloc_funcs(GC_malloc, GC_free);
+  return 0;
 }
 
 int pug_bail(char *fmt, ...) {

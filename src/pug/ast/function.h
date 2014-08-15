@@ -17,7 +17,7 @@ void pug_argument_init(pug_argument_t *f);
 
 typedef struct pug_function {
   bstring name;
-  vector_pug_argument_t args;
+  vector_pug_argument_t arguments;
 } pug_function_t;
 
 DECLARE_VECTOR_TYPE   ( pug_function, pug_function_t )

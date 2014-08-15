@@ -19,12 +19,13 @@ void pug_parser_state_init(pug_parser_state_t *state, bstring path) {
   state->module = pug_malloc(sizeof(pug_module_t));
   dlist_create(&state->stack, (void*) pug_noop, pug_malloc, pug_free);
 
-  bstring name = bmidstr(path, 0, blength(path) - 3);
+  int index = bstrrchr(path, '/');
+  bstring name = bmidstr(path, index + 1, blength(path) - 3 - index - 1);
   pug_module_init(state->module, name);
 }
 
 int main(int argc, char **argv) {
-  GC_INIT();
+  pug_init();
 
   if (argc < 2) {
     pug_bail("Usage: %s FILE.pg\n", argv[0]);
@@ -41,29 +42,6 @@ int main(int argc, char **argv) {
 
   printf("Dumping to %s\n", bdata(dumppath));
   pug_module_dump_file(state->module, dumppath);
-
-  /* printf("[AST]\n"); */
-  /* for (int i = 0; i < vector_pug_function_size(&state->module->functions); i++) { */
-  /*   pug_function_t *function = vector_pug_function_get(&state->module->functions, i); */
-  /*   printf("  - function %s", function->name); */
-  /*   bool first = true; */
-  /*   int num_args = vector_pug_argument_size(&function->args); */
-
-  /*   if (num_args > 0) { */
-  /*     printf("("); */
-  /*     for (int j = 0; j < num_args; j++) { */
-  /*       pug_argument_t *arg = vector_pug_argument_get(&function->args, j); */
-  /*       if (first) { */
-  /*         first = false; */
-  /*       } else { */
-  /*         printf(", "); */
-  /*       } */
-  /*       printf("%s", arg->name); */
-  /*     } */
-  /*     printf(")"); */
-  /*   } */
-  /*   printf("%s", "\n"); */
-  /* } */
 
   return 0;
 }
@@ -94,7 +72,7 @@ void *pug_parser_on_argument(void *this, bstring name) {
   pug_argument_t *arg = pug_malloc(sizeof(pug_argument_t));
   pug_argument_init(arg);
   arg->name = name;
-  vector_pug_argument_push(&function->args, arg);
+  vector_pug_argument_push(&function->arguments, arg);
   return arg;
 }
 

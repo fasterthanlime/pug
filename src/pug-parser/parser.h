@@ -124,7 +124,6 @@ int pug_parser_parse(void *this, bstring path);
 ////////////////////// callbacks //////////////////////
 
 void pug_parser_set_token_position_pointer(void *, int *, int *);
-void* pug_parser_strdup(void *);
 void* pug_parser_on_operation(void *, char, int, int);
 void* pug_parser_on_function_start(void *, bstring name);
 void* pug_parser_on_argument(void *, bstring name);

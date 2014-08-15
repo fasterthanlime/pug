@@ -46,10 +46,6 @@ int main(int argc, char **argv) {
   return 0;
 }
 
-void* pug_parser_strdup(void *str) {
-  return GC_STRDUP(str);
-}
-
 void* pug_parser_on_operation(void *this, char op, int lhs, int rhs) {
   pug_parser_state_t *state = this;
   pug_operation_t *operation = pug_malloc(sizeof(pug_operation_t));

@@ -73,6 +73,7 @@ foreach(lib ${PUG_LIBS_NAMES})
     ${lib}_LIB
     NAMES ${lib}
     PATHS ${DEPS_PREFIX}/lib
+    PATH_SUFFIXES i386 x86_64
   )
   set(PUG_LIBS ${PUG_LIBS} ${${lib}_LIB})
 endforeach()
